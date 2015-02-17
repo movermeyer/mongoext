@@ -33,8 +33,7 @@ class Model(object):
     def __init__(self, **kw):
         for name, obj in self.FIELDS.iteritems():
             if name in kw:
-                field = getattr(self, name)
-                setattr(self, name, field(kw[name]))
+                setattr(self, name, obj(kw[name]))
             else:
                 setattr(self, name, None)
 
