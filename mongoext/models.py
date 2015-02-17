@@ -37,5 +37,8 @@ class Model(object):
             else:
                 setattr(self, name, None)
 
+    def save(self):
+        self.__init__(**vars(self))
+
     def __repr__(self):
         return '<{}: {}>'.format(type(self).__name__, self._id)
