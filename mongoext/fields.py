@@ -8,4 +8,4 @@ class Field(object):
 
 class Numeric(Field):
     def __call__(self, val):
-        return str(val)
+        return int(val)
