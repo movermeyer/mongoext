@@ -16,6 +16,7 @@ class Collection(object):
         self.model = None
         self.pymongo_collection = None
 
+        self.KEY_COMPRESSION['_id'] = '_id'
         self.KEY_UNCOMPRESSION = {v: k for k, v in self.KEY_COMPRESSION.iteritems()}
 
     @property
@@ -25,7 +26,7 @@ class Collection(object):
         return self.pymongo_collection
 
     def pack_fields(self, document):
-        return {self.KEY_COMPRESSION.get(k, k): v for k, v in document.iteritems()}
+        return {self.KEY_COMPRESSION[k]: v for k, v in document.iteritems()}
 
     def unpack_fields(self, document):
         return {self.KEY_UNCOMPRESSION.get(k, k): v for k, v in document.iteritems()}
