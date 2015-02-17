@@ -30,10 +30,10 @@ class Collection(object):
     def unpack_fields(self, document):
         return {self.KEY_UNCOMPRESSION.get(k, k): v for k, v in document.iteritems()}
 
-    def find(self, spec, fields, *args, **kw):
-        if spec:
-            spec = self.pack_fields(spec)
-        if fields:
-            fields = self.pack_fields(fields)
-        pymongo_cursor = self.collection.find(spec, fields, *args, **kw)
+    def find(self, spec=None, fields=None, skip=0):
+        pymongo_cursor = self.collection.find(
+            spec=spec and self.pack_fields(spec),
+            fields=fields and self.pack_fields(fields),
+            skip=skip,
+        )
         return mongoext.cursor.Cursor(self, pymongo_cursor)
