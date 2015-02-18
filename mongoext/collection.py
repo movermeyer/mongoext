@@ -14,7 +14,7 @@ class Collection(object):
 
     def __init__(self):
         self.model = None
-        self.pymongo_collection = None
+        self.__pymongo_collection = None
 
         if self.KEYS_COMPRESSION:
             self.keys_compression = dict(self.KEYS_COMPRESSION, _id='_id')
@@ -24,9 +24,9 @@ class Collection(object):
 
     @property
     def collection(self):
-        if not self.pymongo_collection:
-            self.pymongo_collection = pymongo.Connection(**self.CONNECTION)[self.DATABASE][self.NAME]
-        return self.pymongo_collection
+        if not self.__pymongo_collection:
+            self.__pymongo_collection = pymongo.Connection(**self.CONNECTION)[self.DATABASE][self.NAME]
+        return self.__pymongo_collection
 
     def pack_fields(self, document):
         if not self.keys_compression:
