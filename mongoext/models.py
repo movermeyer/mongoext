@@ -40,5 +40,8 @@ class Model(object):
     def save(self):
         self.__init__(**vars(self))
 
+    def to_dict(self):
+        return {f: getattr(self, f, None) for f in self.FIELDS}
+
     def __repr__(self):
         return '<{}: {}>'.format(type(self).__name__, self._id)

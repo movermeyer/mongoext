@@ -28,6 +28,10 @@ class Collection(object):
             self.__pymongo_collection = pymongo.Connection(**self.CONNECTION)[self.DATABASE][self.NAME]
         return self.__pymongo_collection
 
+    @property
+    def database(self):
+        return self.collection.database
+
     def pack_fields(self, document):
         if not self.keys_compression:
             return document
@@ -45,3 +49,15 @@ class Collection(object):
             skip=skip,
         )
         return mongoext.cursor.Cursor(self, pymongo_cursor)
+
+    def insert(self, documents):
+        pymongo_documents = []
+        for document in documents:
+            if isinstance(document, self.model):
+                pymongo_documents.append(document.to_dict())
+            elif isinstance(document, dict):
+                pymongo_documents.append(document)
+            else:
+                raise TypeError(type(document))
+        pymongo_documents = [self.pack_fields(d) for d in pymongo_documents]
+        return self.collection.insert(pymongo_documents)

@@ -21,6 +21,13 @@ class Model(mongoext.models.Model):
 
 
 class Mongoext(unittest.TestCase):
+    def setUp(self):
+        model = Model(about=1)
+        Model.objects.insert([model])
+
+    def tearDown(self):
+        Collection().database.drop_collection(Collection.NAME)
+
     def test_collection_find(self):
         cursor = Collection().find({'about': {'$gte': 1}}, {'about': 1}, 1).sort('about')
         self.assertTrue(all([lambda: isinstance(c, dict) for c in cursor]))
