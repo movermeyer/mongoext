@@ -47,3 +47,7 @@ class Mongoext(unittest.TestCase):
         model.about = None
         with self.assertRaises(TypeError):
             model.save()
+
+    def test_model_fail_insert(self):
+        with self.assertRaises(TypeError):
+            Model.objects.insert(True)
