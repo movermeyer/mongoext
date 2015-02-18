@@ -23,7 +23,7 @@ class Model(mongoext.models.Model):
 class Mongoext(unittest.TestCase):
     def setUp(self):
         model = Model(about=1)
-        Model.objects.insert([model])
+        Model.objects.insert_one(model)
 
     def tearDown(self):
         Collection().database.drop_collection(Collection.NAME)

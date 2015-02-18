@@ -61,3 +61,6 @@ class Collection(object):
                 raise TypeError(type(document))
         pymongo_documents = [self.pack_fields(d) for d in pymongo_documents]
         return self.collection.insert(pymongo_documents)
+
+    def insert_one(self, document):
+        return self.insert([document])
