@@ -9,7 +9,7 @@ class Collection(mongoext.collection.Collection):
     CONNECTION = {'host': 'localhost', 'port': 27017}
     DATABASE = 'db1'
     NAME = 'collection1'
-    KEY_COMPRESSION = {
+    KEYS_COMPRESSION = {
         'about': 'a'
     }
 

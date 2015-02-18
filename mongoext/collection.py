@@ -9,15 +9,18 @@ class Collection(object):
     CONNECTION = None
     DATABASE = None
 
-    KEY_COMPRESSION = None
+    KEYS_COMPRESSION = None
     NAME = None
 
     def __init__(self):
         self.model = None
         self.pymongo_collection = None
 
-        self._key_compression = dict(self.KEY_COMPRESSION, _id='_id')
-        self._key_uncompression = {v: k for k, v in self._key_compression.iteritems()}
+        if self.KEYS_COMPRESSION:
+            self.keys_compression = dict(self.KEYS_COMPRESSION, _id='_id')
+            self.keys_uncompression = {v: k for k, v in self.keys_compression.iteritems()}
+        else:
+            self.keys_compression = self.keys_uncompression = None
 
     @property
     def collection(self):
@@ -26,10 +29,14 @@ class Collection(object):
         return self.pymongo_collection
 
     def pack_fields(self, document):
-        return {self._key_compression[k]: v for k, v in document.iteritems()}
+        if not self.keys_compression:
+            return document
+        return {self.keys_compression[k]: v for k, v in document.iteritems()}
 
     def unpack_fields(self, document):
-        return {self._key_uncompression.get(k, k): v for k, v in document.iteritems()}
+        if not self.keys_uncompression:
+            return document
+        return {self.keys_uncompression.get(k, k): v for k, v in document.iteritems()}
 
     def find(self, spec=None, fields=None, skip=0):
         pymongo_cursor = self.collection.find(
