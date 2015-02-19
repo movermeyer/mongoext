@@ -86,9 +86,6 @@ class Collection(object):
     def ensure_index(self):
         pass
 
-    def find(self):
-        pass
-
     def find_and_modify(self):
         pass
 
