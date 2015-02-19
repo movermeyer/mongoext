@@ -64,3 +64,48 @@ class Collection(object):
 
     def insert_one(self, document):
         return self.insert([document])
+
+    def count(self):
+        pass
+
+    def create_index(self):
+        pass
+
+    def distinct(self):
+        pass
+
+    def drop(self):
+        pass
+
+    def drop_index(self):
+        pass
+
+    def drop_indexes(self):
+        pass
+
+    def ensure_index(self):
+        pass
+
+    def find(self):
+        pass
+
+    def find_and_modify(self):
+        pass
+
+    def find_one(self):
+        pass
+
+    def full_name(self):
+        pass
+
+    def group(self):
+        pass
+
+    def remove(self):
+        pass
+
+    def save(self):
+        pass
+
+    def update(self):
+        pass
