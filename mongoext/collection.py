@@ -43,6 +43,24 @@ class Collection(object):
         return {self.keys_uncompression.get(k, k): v for k, v in document.iteritems()}
 
     def find(self, spec=None, fields=None, skip=0):
+        ''' Query the database.
+
+        The `spec` argument is a prototype document that all results
+        must match. For example::
+
+            db.test.find({"hello": "world"})
+
+        only matches documents that have a key "hello" with value
+        "world".  Matches can have other keys *in addition* to
+        "hello". The `fields` argument is used to specify a subset of
+        fields that should be included in the result documents. By
+        limiting results to a certain subset of fields you can cut
+        down on network traffic and decoding time.
+
+        :param spec: (optional) a SON object specifying elements which
+        must be present for a document to be included in the result set
+        :type spec: dict
+        '''
         pymongo_cursor = self.collection.find(
             spec=spec and self.pack_fields(spec),
             fields=fields and self.pack_fields(fields),
