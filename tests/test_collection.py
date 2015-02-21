@@ -60,8 +60,23 @@ class FindDocumentTestCase(fixture.MongoextTestCase):
         for document in documents:
             document.pop('_id')
         self.assertEqual(documents, [{'created_ts': d['created_ts']} for d in self.documents])
-        # cursor = fixture.Collection().find({'created_ts': {'$gte': 1}}, {'title': 1}, 1).sort('created_ts')
-        # self.assertTrue(all([lambda: isinstance(c, dict) for c in cursor]))
+
+    def test_find_documents_with_skip(self):
+        documents = [d for d in fixture.Collection().find(skip=1)]
+        for document in documents:
+            document.pop('_id')
+        self.assertEqual(documents, self.documents[1:])
+
+    def test_find_documents_by_spec_with_fields_and_skip(self):
+        spec = {
+            'created_ts': {'$gt': 1},
+        }
+        fields = {'created_ts': 1}
+        skip = 1
+        documents = [d for d in fixture.Collection().find(spec, fields, skip)]
+        for document in documents:
+            document.pop('_id')
+        self.assertEqual(documents, [{'created_ts': d['created_ts']} for d in self.documents[2:]])
 
 
 class EmptyCollectionTestCase(unittest.TestCase):
