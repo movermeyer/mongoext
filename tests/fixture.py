@@ -29,9 +29,9 @@ class Model(mongoext.models.Model):
 class MongoextTestCase(unittest.TestCase):
     def setUp(self):
         Collection().insert_one({
-            'title': 'Title',
-            'description': 'Description',
-            'content': 'Content',
+            'title': u'Title',
+            'description': u'Description',
+            'content': u'Content',
             'created_ts': 1,
         })
 
