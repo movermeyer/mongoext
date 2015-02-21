@@ -20,7 +20,7 @@ class MetaModel(type):
     def __init__(cls, name, bases, attrs):
         for attr, obj in vars(cls).iteritems():
             if issubclass(type(obj), mongoext.collection.Collection):
-                obj.model = cls
+                obj._model = cls
         super(MetaModel, cls).__init__(name, bases, attrs)
 
 

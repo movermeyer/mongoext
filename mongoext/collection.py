@@ -13,7 +13,7 @@ class Collection(object):
     NAME = None
 
     def __init__(self):
-        self.model = None
+        self._model = None
         self.__pymongo_collection = None
 
         if self.KEYS_COMPRESSION:
@@ -53,13 +53,22 @@ class Collection(object):
     def insert(self, documents):
         pymongo_documents = []
         for document in documents:
-            if self.model and isinstance(document, self.model):
+            if self._model and isinstance(document, self._model):
                 pymongo_documents.append(document.to_dict())
             elif isinstance(document, dict):
                 pymongo_documents.append(document)
             else:
                 raise TypeError(type(document))
         pymongo_documents = [self.pack_fields(d) for d in pymongo_documents]
+
+        for document in pymongo_documents:
+            drop_fields = []
+            for field in document:
+                if document[field] is None:
+                    drop_fields.append(field)
+            for field in drop_fields:
+                del document[field]
+
         return self.collection.insert(pymongo_documents)
 
     def insert_one(self, document):
