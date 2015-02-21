@@ -53,7 +53,7 @@ class Collection(object):
     def insert(self, documents):
         pymongo_documents = []
         for document in documents:
-            if isinstance(document, self.model):
+            if self.model and isinstance(document, self.model):
                 pymongo_documents.append(document.to_dict())
             elif isinstance(document, dict):
                 pymongo_documents.append(document)
