@@ -7,23 +7,33 @@ import mongoext.models
 
 class Collection(mongoext.collection.Collection):
     CONNECTION = {'host': 'localhost', 'port': 27017}
-    DATABASE = 'db1'
-    NAME = 'collection1'
+    DATABASE = 'db'
+    NAME = 'articles'
     KEYS_COMPRESSION = {
-        'about': 'a'
+        'title': 't',
+        'description': 'd',
+        'content': 'c',
+        'created_ts': 'ct',
     }
 
 
 class Model(mongoext.models.Model):
     objects = Collection()
 
-    about = mongoext.fields.Numeric()
+    title = mongoext.fields.String()
+    description = mongoext.fields.String()
+    content = mongoext.fields.String()
+    created_ts = mongoext.fields.Numeric(required=True)
 
 
 class MongoextTestCase(unittest.TestCase):
     def setUp(self):
-        model = Model(about=1)
-        Model.objects.insert_one(model)
+        Collection().insert_one({
+            'title': 'Title',
+            'description': 'Description',
+            'content': 'Content',
+            'created_ts': 1,
+        })
 
     def tearDown(self):
         Collection().database.drop_collection(Collection.NAME)
