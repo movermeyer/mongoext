@@ -87,15 +87,6 @@ class Collection(object):
     def drop(self):
         return self.collection.drop()
 
-    def drop_index(self):
-        pass
-
-    def drop_indexes(self):
-        pass
-
-    def ensure_index(self):
-        pass
-
     def find_and_modify(self):
         pass
 
