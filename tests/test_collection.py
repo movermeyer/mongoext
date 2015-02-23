@@ -102,42 +102,45 @@ class FindModelsTestCase(fixture.MongoextTestCase):
         for document_id, model in zip(document_ids, self.models):
             model._id = document_id
 
+    def equal(self, documents1, documents2):
+        self.assertEqual([d.to_dict() for d in documents1], [d.to_dict() for d in documents2])
+
     def test_find_models(self):
-        models = [m for m in fixture.Model.objects.find()]
-        self.assertEqual([m.to_dict() for m in models], [m.to_dict() for m in self.models])
+        models = fixture.Model.objects.find()
+        self.equal(models, self.models)
 
     def test_find_models_by_spec(self):
         spec = {
             'created_ts': 2
         }
-        models = [m for m in fixture.Model.objects.find(spec)]
-        self.assertEqual([m.to_dict() for m in models], [self.models[1].to_dict()])
+        models = fixture.Model.objects.find(spec)
+        self.equal(models, [self.models[1]])
 
     def test_find_models_by_spec_with_empty_result(self):
         spec = {
             'created_ts': -1
         }
-        models = [m for m in fixture.Model.objects.find(spec)]
-        self.assertEqual(models, [])
+        models = fixture.Model.objects.find(spec)
+        self.equal(models, [])
 
     def test_find_models_by_spec_with_more_the_one_result(self):
         spec = {
             'created_ts': {'$gt': 1},
         }
-        models = [d for d in fixture.Model.objects.find(spec)]
-        self.assertEqual([m.to_dict() for m in models], [m.to_dict() for m in self.models[1:]])
+        models = fixture.Model.objects.find(spec)
+        self.equal(models, self.models[1:])
 
     def test_find_documents_with_skip(self):
-        models = [d for d in fixture.Model.objects.find(skip=1)]
-        self.assertEqual([m.to_dict() for m in models], [m.to_dict() for m in self.models[1:]])
+        models = fixture.Model.objects.find(skip=1)
+        self.equal(models, self.models[1:])
 
     def test_find_documents_by_spec_with_fields_and_skip(self):
         spec = {
             'created_ts': {'$gt': 1},
         }
         skip = 1
-        models = [d for d in fixture.Model.objects.find(spec, skip=skip)]
-        self.assertEqual([m.to_dict() for m in models], [m.to_dict() for m in self.models[2:]])
+        models = fixture.Model.objects.find(spec, skip=skip)
+        self.equal(models, self.models[2:])
 
 
 class EmptyCollectionTestCase(unittest.TestCase):
