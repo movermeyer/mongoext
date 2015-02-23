@@ -1,5 +1,3 @@
-import unittest
-
 from . import fixture
 
 
@@ -221,6 +219,29 @@ class DropTestCase(fixture.MongoextTestCase):
         self.assertIsNone(fixture.Collection().drop())
 
 
-class EmptyCollectionTestCase(unittest.TestCase):
-    def test_collection_count(self):
-        pass
+class RemoveTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        self.documents = [{
+            'title': u'Title',
+        }, {
+            'title': u'Title',
+        }, {
+            'title': u'Title1',
+        }]
+        fixture.Collection().insert(self.documents)
+
+    def test_complete_remove(self):
+        fixture.Collection().remove()
+        self.assertEqual(fixture.Collection().count(), 0)
+
+    def test_single_removal(self):
+        fixture.Collection().remove({'title': u'Title1'})
+        self.assertEqual(fixture.Collection().count(), 2)
+
+    def test_multiple_removal(self):
+        fixture.Collection().remove({'title': u'Title'})
+        self.assertEqual(fixture.Collection().count(), 1)
+
+    def test_multiple_removal_with_multi_false(self):
+        fixture.Collection().remove({'title': u'Title'}, multi=False)
+        self.assertEqual(fixture.Collection().count(), 2)

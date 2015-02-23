@@ -94,8 +94,12 @@ class Collection(object):
     def drop(self):
         return self.collection.drop()
 
-    def remove(self):
-        pass
+    def remove(self, spec=None, multi=True):
+        if spec is None:
+            return self.collection.remove(multi=multi)
+
+        spec = self.pack_fields(spec)
+        return self.collection.remove(spec, multi=multi)
 
     def save(self):
         pass
