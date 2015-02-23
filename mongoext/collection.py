@@ -94,12 +94,6 @@ class Collection(object):
     def drop(self):
         return self.collection.drop()
 
-    def full_name(self):
-        pass
-
-    def group(self):
-        pass
-
     def remove(self):
         pass
 
