@@ -137,7 +137,7 @@ class FindModelsTestCase(fixture.MongoextTestCase):
         self.equal(models, self.models[2:])
 
 
-class CountDocumentsTestCase(fixture.MongoextTestCase):
+class CountTestCase(fixture.MongoextTestCase):
     def setUp(self):
         pass
 
@@ -172,6 +172,21 @@ class CountDocumentsTestCase(fixture.MongoextTestCase):
 
         fixture.Collection().insert(documents)
         self.assertEqual(fixture.Collection().count(), 3)
+
+
+class DistinctTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        self.documents = [{
+            'title': u'Title',
+        }, {
+            'title': u'Title',
+        }, {
+            'title': u'Title1',
+        }]
+        fixture.Collection().insert(self.documents)
+
+    def test_distinct(self):
+        self.assertEqual(fixture.Collection().distinct('title'), [u'Title', u'Title1'])
 
 
 class EmptyCollectionTestCase(unittest.TestCase):

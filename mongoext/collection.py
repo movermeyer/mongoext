@@ -32,6 +32,9 @@ class Collection(object):
     def database(self):
         return self.collection.database
 
+    def pack_field(self, field):
+        return self.keys_compression.get(field, field)
+
     def pack_fields(self, document):
         if not self.keys_compression:
             return document
@@ -77,8 +80,9 @@ class Collection(object):
     def count(self):
         return self.collection.count()
 
-    def distinct(self):
-        pass
+    def distinct(self, key):
+        key = self.pack_field(key)
+        return self.collection.distinct(key)
 
     def drop(self):
         pass
