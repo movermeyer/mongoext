@@ -24,48 +24,44 @@ class FindDocumentTestCase(fixture.MongoextTestCase):
 
         fixture.Collection().insert(self.documents)
 
-    def test_find_documents(self):
-        documents = [d for d in fixture.Collection().find()]
-        for document in documents:
+    def equal(self, documents1, documents2):
+        documents1 = [d for d in documents1]
+        for document in documents1:
             document.pop('_id')
-        self.assertEqual(documents, self.documents)
+        self.assertEqual(documents1, documents2)
+
+    def test_find_documents(self):
+        documents = fixture.Collection().find()
+        self.equal(documents, self.documents)
 
     def test_find_documents_by_spec(self):
         spec = {
             'created_ts': 2
         }
-        documents = [d for d in fixture.Collection().find(spec)]
-        for document in documents:
-            document.pop('_id')
-        self.assertEqual(documents, [self.documents[1]])
+        documents = fixture.Collection().find(spec)
+        self.equal(documents, [self.documents[1]])
 
     def test_find_documents_by_spec_with_empty_result(self):
         spec = {
             'created_ts': -1
         }
-        documents = [d for d in fixture.Collection().find(spec)]
-        self.assertEqual(documents, [])
+        documents = fixture.Collection().find(spec)
+        self.equal(documents, [])
 
     def test_find_documents_by_spec_with_more_the_one_result(self):
         spec = {
             'created_ts': {'$gt': 1},
         }
-        documents = [d for d in fixture.Collection().find(spec)]
-        for document in documents:
-            document.pop('_id')
-        self.assertEqual(documents, self.documents[1:])
+        documents = fixture.Collection().find(spec)
+        self.equal(documents, self.documents[1:])
 
     def test_find_documents_with_specified_fields(self):
-        documents = [d for d in fixture.Collection().find(fields={'created_ts': 1})]
-        for document in documents:
-            document.pop('_id')
-        self.assertEqual(documents, [{'created_ts': d['created_ts']} for d in self.documents])
+        documents = fixture.Collection().find(fields={'created_ts': 1})
+        self.equal(documents, [{'created_ts': d['created_ts']} for d in self.documents])
 
     def test_find_documents_with_skip(self):
-        documents = [d for d in fixture.Collection().find(skip=1)]
-        for document in documents:
-            document.pop('_id')
-        self.assertEqual(documents, self.documents[1:])
+        documents = fixture.Collection().find(skip=1)
+        self.equal(documents, self.documents[1:])
 
     def test_find_documents_by_spec_with_fields_and_skip(self):
         spec = {
@@ -73,10 +69,8 @@ class FindDocumentTestCase(fixture.MongoextTestCase):
         }
         fields = {'created_ts': 1}
         skip = 1
-        documents = [d for d in fixture.Collection().find(spec, fields, skip)]
-        for document in documents:
-            document.pop('_id')
-        self.assertEqual(documents, [{'created_ts': d['created_ts']} for d in self.documents[2:]])
+        documents = fixture.Collection().find(spec, fields, skip)
+        self.equal(documents, [{'created_ts': d['created_ts']} for d in self.documents[2:]])
 
 
 class FindModelsTestCase(fixture.MongoextTestCase):
