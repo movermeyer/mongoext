@@ -77,9 +77,6 @@ class Collection(object):
     def count(self):
         return self.collection.count()
 
-    def create_index(self):
-        pass
-
     def distinct(self):
         pass
 
