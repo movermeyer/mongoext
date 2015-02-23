@@ -245,3 +245,25 @@ class RemoveTestCase(fixture.MongoextTestCase):
     def test_multiple_removal_with_multi_false(self):
         fixture.Collection().remove({'title': u'Title'}, multi=False)
         self.assertEqual(fixture.Collection().count(), 2)
+
+
+class UpdateTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        self.documents = [{
+            'title': u'Title',
+        }, {
+            'title': u'Title',
+        }, {
+            'title': u'Title1',
+        }]
+        fixture.Collection().insert(self.documents)
+
+    def test_update_one(self):
+        fixture.Collection().update({'title': u'Title'}, {'$set': {'title': u'Title2'}})
+        documents = [d for d in fixture.Collection().find({'title': u'Title2'})]
+        self.assertEqual(len(documents), 1)
+
+    def test_update_multi(self):
+        fixture.Collection().update({'title': u'Title'}, {'$set': {'title': u'Title2'}}, multi=True)
+        documents = [d for d in fixture.Collection().find({'title': u'Title2'})]
+        self.assertEqual(len(documents), 2)

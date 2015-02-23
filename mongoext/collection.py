@@ -118,5 +118,7 @@ class Collection(object):
     def save(self):
         pass
 
-    def update(self):
-        pass
+    def update(self, spec, document, multi=False):
+        spec = self.pack_fields(spec)
+        document = self.pack_fields(document)
+        self.collection.update(spec, document, multi=multi)
