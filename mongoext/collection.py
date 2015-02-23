@@ -85,7 +85,7 @@ class Collection(object):
         return self.collection.distinct(key)
 
     def drop(self):
-        pass
+        return self.collection.drop()
 
     def drop_index(self):
         pass

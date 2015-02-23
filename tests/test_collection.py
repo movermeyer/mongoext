@@ -189,6 +189,26 @@ class DistinctTestCase(fixture.MongoextTestCase):
         self.assertEqual(fixture.Collection().distinct('title'), [u'Title', u'Title1'])
 
 
+class DropTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        self.documents = [{
+            'title': u'Title',
+        }, {
+            'title': u'Title',
+        }, {
+            'title': u'Title1',
+        }]
+        fixture.Collection().insert(self.documents)
+
+    def test_drop(self):
+        self.assertIsNone(fixture.Collection().drop())
+
+    def test_multiple_drop(self):
+        fixture.Collection().drop()
+        fixture.Collection().drop()
+        self.assertIsNone(fixture.Collection().drop())
+
+
 class EmptyCollectionTestCase(unittest.TestCase):
     def test_collection_count(self):
         pass
