@@ -115,8 +115,12 @@ class Collection(object):
         spec = self.pack_fields(spec)
         return self.collection.remove(spec, multi=multi)
 
-    def save(self):
-        pass
+    def save(self, document):
+        if not isinstance(document, dict):
+            document = document.to_dict()
+
+        document = self.pack_fields(document)
+        return self.collection.save(document)
 
     def update(self, spec, document, multi=False):
         spec = self.pack_fields(spec)

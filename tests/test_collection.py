@@ -267,3 +267,45 @@ class UpdateTestCase(fixture.MongoextTestCase):
         fixture.Collection().update({'title': u'Title'}, {'$set': {'title': u'Title2'}}, multi=True)
         documents = [d for d in fixture.Collection().find({'title': u'Title2'})]
         self.assertEqual(len(documents), 2)
+
+
+class SaveDocumentTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        pass
+
+    def test_save_new_document(self):
+        document = {
+            'title': u'Title',
+        }
+        fixture.Collection().save(document)
+        self.assertEqual(fixture.Collection().count(), 1)
+
+    def test_save_existed_document(self):
+        document = {'title': u'Title'}
+        _id = fixture.Collection().save(document)
+        document['_id'] = _id
+        document['title'] = u'Title1'
+        fixture.Collection().save(document)
+        self.assertEqual(fixture.Collection().count(), 1)
+
+
+class SaveModelTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        pass
+
+    def test_save_new_model(self):
+        model = fixture.Model(**{
+            'created_ts': 1,
+        })
+        fixture.Collection().save(model)
+        self.assertEqual(fixture.Collection().count(), 1)
+
+    def test_save_existed_model(self):
+        model = fixture.Model(**{
+            'created_ts': 1,
+        })
+        _id = fixture.Collection().save(model)
+        model._id = _id
+        model.created_ts = 2
+        fixture.Collection().save(model)
+        self.assertEqual(fixture.Collection().count(), 1)
