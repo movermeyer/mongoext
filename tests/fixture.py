@@ -28,13 +28,12 @@ class Model(mongoext.models.Model):
 
 class MongoextTestCase(unittest.TestCase):
     def setUp(self):
-        self.document = {
+        Collection().insert_one({
             'title': u'Title',
             'description': u'Description',
             'content': u'Content',
             'created_ts': 1,
-        }
-        Collection().insert_one(self.document)
+        })
 
     def tearDown(self):
         Collection().drop()
