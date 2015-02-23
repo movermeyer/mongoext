@@ -137,6 +137,43 @@ class FindModelsTestCase(fixture.MongoextTestCase):
         self.equal(models, self.models[2:])
 
 
+class CountDocumentsTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        pass
+
+    def test_single_document_in_collection(self):
+        documents = [{
+            'title': u'Title',
+            'description': u'Description',
+            'content': u'Content',
+            'created_ts': 1,
+        }]
+
+        fixture.Collection().insert(documents)
+        self.assertEqual(fixture.Collection().count(), 1)
+
+    def test_multiple_document_in_collection(self):
+        documents = [{
+            'title': u'Title',
+            'description': u'Description',
+            'content': u'Content',
+            'created_ts': 1,
+        }, {
+            'title': u'Title2',
+            'description': u'Description2',
+            'content': u'Content2',
+            'created_ts': 2,
+        }, {
+            'title': u'Title3',
+            'description': u'Description3',
+            'content': u'Content3',
+            'created_ts': 3,
+        }]
+
+        fixture.Collection().insert(documents)
+        self.assertEqual(fixture.Collection().count(), 3)
+
+
 class EmptyCollectionTestCase(unittest.TestCase):
     def test_collection_count(self):
         pass

@@ -75,7 +75,7 @@ class Collection(object):
         return self.insert([document])
 
     def count(self):
-        pass
+        return self.collection.count()
 
     def create_index(self):
         pass
