@@ -38,12 +38,26 @@ class Collection(object):
     def pack_fields(self, document):
         if not self.keys_compression:
             return document
-        return {self.keys_compression[k]: v for k, v in document.iteritems()}
+        compressed_document = {}
+        for key, value in document.iteritems():
+            if not key.startswith('$'):
+                key = self.keys_compression[key]
+            if isinstance(value, dict):
+                value = self.pack_fields(value)
+            compressed_document[key] = value
+        return compressed_document
 
     def unpack_fields(self, document):
         if not self.keys_uncompression:
             return document
-        return {self.keys_uncompression.get(k, k): v for k, v in document.iteritems()}
+        uncompressed_document = {}
+        for key, value in document.iteritems():
+            if not key.startswith('$'):
+                key = self.keys_uncompression[key]
+            if isinstance(value, dict):
+                value = self.unpack_fields(value)
+            uncompressed_document[key] = value
+        return uncompressed_document
 
     def find(self, spec=None, fields=None, skip=0):
         pymongo_cursor = self.collection.find(
