@@ -36,4 +36,4 @@ class MongoextTestCase(unittest.TestCase):
         })
 
     def tearDown(self):
-        Collection().database.drop_collection(Collection.NAME)
+        Collection().drop()
