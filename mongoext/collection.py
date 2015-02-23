@@ -53,6 +53,13 @@ class Collection(object):
         )
         return mongoext.cursor.Cursor(self, pymongo_cursor)
 
+    def find_one(self, *args, **kw):
+        cursor = self.find(*args, **kw)
+        try:
+            return next(cursor)
+        except StopIteration:
+            return
+
     def insert(self, documents):
         pymongo_documents = []
         for document in documents:
@@ -86,12 +93,6 @@ class Collection(object):
 
     def drop(self):
         return self.collection.drop()
-
-    def find_and_modify(self):
-        pass
-
-    def find_one(self):
-        pass
 
     def full_name(self):
         pass

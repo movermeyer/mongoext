@@ -72,6 +72,18 @@ class FindDocumentTestCase(fixture.MongoextTestCase):
         documents = fixture.Collection().find(spec, fields, skip)
         self.equal(documents, [{'created_ts': d['created_ts']} for d in self.documents[2:]])
 
+    def test_find_one_document(self):
+        document = fixture.Collection().find_one({'created_ts': 1})
+        self.equal([document], [self.documents[0]])
+
+    def test_find_one_document_for_none_results(self):
+        document = fixture.Collection().find_one({'created_ts': -1})
+        self.assertIsNone(document)
+
+    def test_find_one_document_for_multiple_results(self):
+        document = fixture.Collection().find_one()
+        self.equal([document], [self.documents[0]])
+
 
 class FindModelsTestCase(fixture.MongoextTestCase):
     def setUp(self):

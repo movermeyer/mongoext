@@ -15,7 +15,9 @@ class Cursor(object):
                 yield document
 
     def next(self):
-        pass
+        document = next(self.__pymongo_cursor)
+        document = self.collection.unpack_fields(document)
+        return document
 
     def sort(self, *args, **kw):
         self.__pymongo_cursor = self.__pymongo_cursor.sort(*args, **kw)
