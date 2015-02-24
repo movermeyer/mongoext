@@ -325,4 +325,4 @@ class Compression(unittest.TestCase):
         NoCompressionCollection().drop()
 
     def test_compression(self):
-        NoCompressionCollection().find()
+        NoCompressionCollection()
