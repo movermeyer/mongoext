@@ -35,23 +35,9 @@ class Cursor(object):
         self.__pymongo_cursor = self.__pymongo_cursor.limit(limit)
         return self
 
-    def max(self):
-        pass
-
-    def max_scan(self):
-        pass
-
-    def max_time_ms(self):
-        pass
-
-    def min(self):
-        pass
-
     def rewind(self):
-        pass
+        self.__pymongo_cursor.rewind()
 
-    def skip(self):
-        pass
-
-    def where(self):
-        pass
+    def skip(self, skip):
+        self.__pymongo_cursor = self.__pymongo_cursor.skip(skip)
+        return self

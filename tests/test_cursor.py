@@ -44,3 +44,13 @@ class Cursor(fixture.MongoextTestCase):
     def test_limit(self):
         documents = fixture.Collection().find().sort('created_ts').limit(1)
         self.equal(documents, [self.documents[1]])
+
+    def test_rewind(self):
+        cursor = fixture.Collection().find()
+        next(cursor)
+        cursor.rewind()
+        self.equal(cursor, self.documents)
+
+    def test_skip(self):
+        documents = fixture.Collection().find().skip(1)
+        self.equal(documents, self.documents[1:])
