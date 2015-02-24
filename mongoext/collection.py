@@ -32,8 +32,10 @@ class Collection(object):
     def database(self):
         return self.collection.database
 
-    def pack_field(self, field):
-        return self.keys_compression.get(field, field)
+    def pack_field(self, key):
+        if not self.keys_compression:
+            return key
+        return self.keys_compression.get(key, key)
 
     def pack_fields(self, document):
         if not self.keys_compression:
