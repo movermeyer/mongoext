@@ -19,15 +19,17 @@ class Cursor(object):
         document = self.collection.unpack_fields(document)
         return document
 
-    def sort(self, *args, **kw):
-        self.__pymongo_cursor = self.__pymongo_cursor.sort(*args, **kw)
+    def sort(self, key):
+        key = self.collection.pack_field(key)
+        self.__pymongo_cursor = self.__pymongo_cursor.sort(key)
         return self
 
     def count(self):
-        pass
+        return self.__pymongo_cursor.count()
 
-    def distinct(self):
-        pass
+    def distinct(self, key):
+        key = self.collection.pack_field(key)
+        return self.__pymongo_cursor.distinct(key)
 
     def hint(self):
         pass
