@@ -1,3 +1,5 @@
+import unittest
+
 from . import fixture
 
 
@@ -309,3 +311,18 @@ class SaveModelTestCase(fixture.MongoextTestCase):
         model.created_ts = 2
         fixture.Collection().save(model)
         self.assertEqual(fixture.Collection().count(), 1)
+
+
+class NoCompressionCollection(fixture.Collection):
+    KEYS_COMPRESSION = None
+
+
+class Compression(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        NoCompressionCollection().drop()
+
+    def test_compression(self):
+        NoCompressionCollection().find()
