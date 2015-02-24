@@ -325,4 +325,9 @@ class Compression(unittest.TestCase):
         NoCompressionCollection().drop()
 
     def test_compression(self):
-        NoCompressionCollection()
+        spec = {'field': 1}
+        compressed = NoCompressionCollection().pack_fields(spec)
+        self.assertEqual(spec, compressed)
+
+    def test_database(self):
+        self.assertIsNotNone(NoCompressionCollection.database)
