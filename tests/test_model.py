@@ -21,3 +21,7 @@ class ModelTestCase(fixture.MongoextTestCase):
     def test_fail_insert(self):
         with self.assertRaises(TypeError):
             fixture.Model.objects.insert_one(True)
+
+    def test_repr(self):
+        model = fixture.Model.objects.find_one()
+        self.assertTrue(isinstance(repr(model), basestring))

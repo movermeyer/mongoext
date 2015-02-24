@@ -17,7 +17,10 @@ class Cursor(object):
     def next(self):
         document = next(self.__pymongo_cursor)
         document = self.collection.unpack_fields(document)
-        return document
+        if self.collection._model:
+            return self.collection._model(**document)
+        else:
+            return document
 
     def sort(self, key):
         key = self.collection.pack_field(key)
