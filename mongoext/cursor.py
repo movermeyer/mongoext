@@ -31,11 +31,9 @@ class Cursor(object):
         key = self.collection.pack_field(key)
         return self.__pymongo_cursor.distinct(key)
 
-    def hint(self):
-        pass
-
-    def limit(self):
-        pass
+    def limit(self, limit):
+        self.__pymongo_cursor = self.__pymongo_cursor.limit(limit)
+        return self
 
     def max(self):
         pass

@@ -40,3 +40,7 @@ class Cursor(fixture.MongoextTestCase):
     def test_distinct(self):
         values = fixture.Collection().find().distinct('content')
         self.assertEqual(values, [u'Content', u'Content2'])
+
+    def test_limit(self):
+        documents = fixture.Collection().find().sort('created_ts').limit(1)
+        self.equal(documents, [self.documents[1]])
