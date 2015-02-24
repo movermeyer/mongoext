@@ -324,9 +324,14 @@ class Compression(unittest.TestCase):
     def tearDown(self):
         NoCompressionCollection().drop()
 
-    def test_compression(self):
+    def test_pack(self):
         spec = {'field': 1}
         compressed = NoCompressionCollection().pack_fields(spec)
+        self.assertEqual(spec, compressed)
+
+    def test_unpack(self):
+        compressed = {'f': 1}
+        spec = NoCompressionCollection().unpack_fields(compressed)
         self.assertEqual(spec, compressed)
 
     def test_database(self):
