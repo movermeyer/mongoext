@@ -3,7 +3,7 @@
 Changelog
 ---------
 
-0.2.0
+0.2.0 (2015-04-21)
 ++++++++++++++++++
 
 - Rename Models to Documents
