@@ -32,7 +32,7 @@ class String(Field):
         try:
             return unicode(val)
         except TypeError:
-            raise ValueError('String is required')
+            raise ValueError('String object required')
 
 
 class Numeric(Field):
@@ -41,7 +41,7 @@ class Numeric(Field):
         try:
             return int(val)
         except (TypeError, ValueError):
-            raise ValueError('Integer is required')
+            raise ValueError('Integer object required')
 
 
 class List(Field):
@@ -54,7 +54,7 @@ class List(Field):
     @required
     def __call__(self, val):
         if not isinstance(val, collections.Iterable):
-            raise ValueError('Iterablerequired')
+            raise ValueError('Iterable object required')
         if self.field:
             return [self.field(v) for v in val]
         else:
@@ -71,7 +71,7 @@ class DateTime(Field):
         if self.autoadd:
             val = datetime.datetime.now()
         if not isinstance(val, datetime.datetime):
-            raise ValueError('Datetime objectrequired')
+            raise ValueError('Datetime object required')
         return val
 
 
