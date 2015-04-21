@@ -5,11 +5,8 @@ import collections
 
 def required(fn):
     def wrapper(self, val):
-        if val is None:
-            if self.required:
-                raise ValueError(val)
-            else:
-                return val
+        if val is None and self.required:
+            raise ValueError(val)
         return fn(self, val)
     return wrapper
 
