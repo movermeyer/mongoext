@@ -21,7 +21,7 @@ class Field(object):
         return val
 
 
-class String(object):
+class String(Field):
     @required_handler
     def __call__(self, val):
         return unicode(val)
