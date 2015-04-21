@@ -36,8 +36,8 @@ class Numeric(Field):
 
 
 class List(Field):
-    def __init__(self, field, required=False):
-        if not isinstance(field, Field):
+    def __init__(self, field=None, required=False):
+        if field and not isinstance(field, Field):
             raise ValueError
         self.field = field
         self.required = required
@@ -46,4 +46,7 @@ class List(Field):
     def __call__(self, val):
         if not isinstance(val, collections.Iterable):
             raise ValueError(val)
-        return [self.field(v) for v in val]
+        if self.field:
+            return [self.field(v) for v in val]
+        else:
+            return list(val)
