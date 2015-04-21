@@ -32,11 +32,16 @@ class Document(object):
     _id = mongoext.fields.Field()
 
     def __init__(self, **kw):
-        for name, field in self.FIELDS.iteritems():
-            try:
-                setattr(self, name, field(kw.get(name, mongoext.exc.Missed)))
-            except ValueError as e:
-                raise ValueError('{}: {}'.format(e.message, name))
+        for name in self.FIELDS:
+            validate = self.FIELDS[name]
+            value = kw.get(name)
+            if value:
+                try:
+                    setattr(self, name, validate(value))
+                except ValueError as e:
+                    raise ValueError('{}: {}'.format(e.message, name))
+            else:
+                setattr(self, name, None)
 
     def save(self):
         self.__init__(**vars(self))
