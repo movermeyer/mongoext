@@ -29,20 +29,20 @@ class Document(object):
     __metaclass__ = MetaDocument
     FIELDS = None
 
-    _id = mongoext.fields.Field()
-
     objects = None
 
+    _id = mongoext.fields.Field()
+
     def __init__(self, **kw):
-        for name, validate in self.FIELDS.items():
-            if name in kw:
-                value = kw[name]
-                try:
-                    setattr(self, name, validate(value))
-                except ValueError as e:
-                    raise ValueError('{}: {}'.format(e.message, name))
-            else:
-                setattr(self, name, None)
+        for name, value in kw.items():
+            if name not in self.FIELDS:
+                raise mongoext.exc.UndefinedField(name)
+
+            validate = self.FIELDS[name]
+            try:
+                setattr(self, name, validate(value))
+            except ValueError as e:
+                raise ValueError('{}: {}'.format(e.message, name))
 
     def save(self):
         self.__init__(**vars(self))
