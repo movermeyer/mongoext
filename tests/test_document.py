@@ -1,8 +1,9 @@
 import unittest
 
-import mongoext.scheme as scheme
 import mongoext.collection as collection
 import mongoext.document as document
+import mongoext.exc as exc
+import mongoext.scheme as scheme
 
 
 class Collection(collection.Collection):
@@ -18,13 +19,16 @@ class Document(document.Document):
     objects = Collection()
 
 
-class MongoextTestCase(unittest.TestCase):
-    def test_init(self):
-        document = Document(
-            client_id='1',
-            content=1,
-        )
-        document.save()
+class DocumentInitialization(unittest.TestCase):
+    def test_full_success(self):
+        Document(client_id=1, content='content')
+
+    def test_partial_success(self):
+        Document(content='content')
+
+    def test_undefined_field(self):
+        with self.assertRaises(exc.SchemeError):
+            Document(user_id=1)
 
 # from . import fixture
 

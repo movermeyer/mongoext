@@ -35,6 +35,8 @@ class Document(object):
 
     def __init__(self, **data):
         for attr, value in data.items():
+            if attr not in self.SCHEME:
+                raise mongoext.exc.SchemeError(attr)
             setattr(self, attr, value)
 
     def save(self):

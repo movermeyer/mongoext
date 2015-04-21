@@ -7,13 +7,8 @@ class Scheme(object):
     def __init__(self, fields):
         self.fields = fields
 
-    def process(self, data):
-        result = {}
-        for name, value in data.items():
-            if name not in self.fields:
-                raise exc.SchemeError(name)
-            result[name] = self.fields[name].cast(value)
-        return result
+    def __contains__(self, field):
+        return field in self.fields
 
 
 class Field(object):
