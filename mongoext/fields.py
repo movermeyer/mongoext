@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import collections
+
 
 def required_handler(fn):
     def wrapper(self, val):
@@ -31,3 +33,17 @@ class Numeric(Field):
     @required_handler
     def __call__(self, val):
         return int(val)
+
+
+class List(Field):
+    def __init__(self, field, required=False):
+        if not isinstance(field, Field):
+            raise ValueError
+        self.field = field
+        self.required = required
+
+    @required_handler
+    def __call__(self, val):
+        if not isinstance(val, collections.Iterable):
+            raise ValueError(val)
+        return [self.field(v) for v in val]
