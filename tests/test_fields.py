@@ -60,3 +60,48 @@ class TestList(unittest.TestCase):
     def test_non_iterable_int(self):
         with self.assertRaises(ValueError):
             self.field(1)
+
+
+class TestDict(unittest.TestCase):
+    def setUp(self):
+        self.field = fields.Dict()
+
+    def test_random_values(self):
+        self.assertEqual(self.field({'a': 1}), {'a': 1})
+
+    def test_empty_dict(self):
+        self.assertEqual(self.field({}), {})
+
+    def test_non_mapping_none(self):
+        with self.assertRaises(ValueError):
+            self.field(None)
+
+    def test_non_mapping_int(self):
+        with self.assertRaises(ValueError):
+            self.field(1)
+
+
+class TestNumericDict(unittest.TestCase):
+    def setUp(self):
+        self.field = fields.Dict(fields.Numeric())
+
+    def test_random_values(self):
+        self.assertEqual(self.field({'a': 1}), {'a': 1})
+
+    def test_random_valid_values(self):
+        self.assertEqual(self.field({'a': '1'}), {'a': 1})
+
+    def test_empty_dict(self):
+        self.assertEqual(self.field({}), {})
+
+    def test_invalid_values(self):
+        with self.assertRaises(ValueError):
+            self.field({'a': 'a'})
+
+    def test_non_mapping_none(self):
+        with self.assertRaises(ValueError):
+            self.field(None)
+
+    def test_non_mapping_int(self):
+        with self.assertRaises(ValueError):
+            self.field(1)

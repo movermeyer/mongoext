@@ -47,3 +47,20 @@ class List(Field):
             return [self.field(v) for v in val]
         else:
             return list(val)
+
+
+class Dict(Field):
+    def __init__(self, field=None, required=False):
+        if field and not isinstance(field, Field):
+            raise ValueError
+        self.field = field
+        self.required = required
+
+    @required
+    def __call__(self, val):
+        if not isinstance(val, collections.Mapping):
+            raise ValueError(val)
+        if self.field:
+            return {k: self.field(v) for k, v in val.items()}
+        else:
+            return dict(val)
