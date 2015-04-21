@@ -34,10 +34,9 @@ class Document(object):
     objects = None
 
     def __init__(self, **kw):
-        for name in self.FIELDS:
-            validate = self.FIELDS[name]
-            value = kw.get(name)
-            if value:
+        for name, validate in self.FIELDS.items():
+            if name in kw:
+                value = kw[name]
                 try:
                     setattr(self, name, validate(value))
                 except ValueError as e:
