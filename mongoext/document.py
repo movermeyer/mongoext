@@ -4,7 +4,7 @@ import mongoext.collection
 import mongoext.fields
 
 
-class MetaModel(type):
+class MetaDocument(type):
     def __new__(cls, name, bases, attrs):
         fields = {}
         for base in bases:
@@ -15,17 +15,17 @@ class MetaModel(type):
             if issubclass(type(obj), mongoext.fields.Field):
                 fields[attr] = obj
         attrs['FIELDS'] = fields
-        return super(MetaModel, cls).__new__(cls, name, bases, attrs)
+        return super(MetaDocument, cls).__new__(cls, name, bases, attrs)
 
     def __init__(cls, name, bases, attrs):
         for attr, obj in vars(cls).iteritems():
             if issubclass(type(obj), mongoext.collection.Collection):
                 obj._model = cls
-        super(MetaModel, cls).__init__(name, bases, attrs)
+        super(MetaDocument, cls).__init__(name, bases, attrs)
 
 
-class Model(object):
-    __metaclass__ = MetaModel
+class Document(object):
+    __metaclass__ = MetaDocument
     FIELDS = None
 
     _id = mongoext.fields.Field()

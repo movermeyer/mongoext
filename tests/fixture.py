@@ -2,7 +2,7 @@ import unittest
 
 import mongoext.fields
 import mongoext.collection
-import mongoext.models
+import mongoext.document
 
 
 class Collection(mongoext.collection.Collection):
@@ -17,7 +17,7 @@ class Collection(mongoext.collection.Collection):
     }
 
 
-class Model(mongoext.models.Model):
+class Document(mongoext.document.Document):
     objects = Collection()
 
     title = mongoext.fields.String()
