@@ -33,7 +33,10 @@ class Document(object):
     def __init__(self, **kw):
         for name, obj in self.FIELDS.iteritems():
             if name in kw:
-                setattr(self, name, obj(kw[name]))
+                try:
+                    setattr(self, name, obj(kw[name]))
+                except ValueError as e:
+                    raise ValueError('{}: {}'.format(e.message, name))
             else:
                 setattr(self, name, None)
 

@@ -7,7 +7,7 @@ import datetime
 def required(fn):
     def wrapper(self, val):
         if val is None and self.required:
-            raise ValueError(val)
+            raise ValueError('Required')
         return fn(self, val)
     return wrapper
 
@@ -24,13 +24,19 @@ class Field(object):
 class String(Field):
     @required
     def __call__(self, val):
-        return unicode(val)
+        try:
+            return unicode(val)
+        except TypeError:
+            raise ValueError('String is required')
 
 
 class Numeric(Field):
     @required
     def __call__(self, val):
-        return int(val)
+        try:
+            return int(val)
+        except (TypeError, ValueError):
+            raise ValueError('Integer is required')
 
 
 class List(Field):
@@ -43,7 +49,7 @@ class List(Field):
     @required
     def __call__(self, val):
         if not isinstance(val, collections.Iterable):
-            raise ValueError(val)
+            raise ValueError('Iterablerequired')
         if self.field:
             return [self.field(v) for v in val]
         else:
@@ -60,7 +66,7 @@ class DateTime(Field):
         if self.autoadd:
             val = datetime.datetime.now()
         if not isinstance(val, datetime.datetime):
-            raise ValueError
+            raise ValueError('Datetime objectrequired')
         return val
 
 
@@ -74,7 +80,7 @@ class Dict(Field):
     @required
     def __call__(self, val):
         if not isinstance(val, collections.Mapping):
-            raise ValueError(val)
+            raise ValueError('Mapping object required')
         if self.field:
             return {k: self.field(v) for k, v in val.items()}
         else:
