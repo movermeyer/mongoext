@@ -1,4 +1,4 @@
-.PHONY: test mongo clean
+.PHONY: test mongo clean publish
 
 test:
 	flake8
@@ -9,3 +9,6 @@ mongo:
 
 clean:
 	rm -rf build dist mongoext.egg-info
+
+publish: test
+	python setup.py sdist bdist_wheel upload
