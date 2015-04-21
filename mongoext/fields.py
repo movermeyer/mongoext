@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import collections
+import datetime
 
 
 def required(fn):
@@ -47,6 +48,20 @@ class List(Field):
             return [self.field(v) for v in val]
         else:
             return list(val)
+
+
+class DateTime(Field):
+    def __init__(self, required=False, autoadd=False):
+        self.required = required
+        self.autoadd = autoadd
+
+    @required
+    def __call__(self, val):
+        if self.autoadd:
+            val = datetime.datetime.now()
+        if not isinstance(val, datetime.datetime):
+            raise ValueError
+        return val
 
 
 class Dict(Field):
