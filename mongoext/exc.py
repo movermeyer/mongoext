@@ -2,5 +2,9 @@ class MongoextException(Exception):
     pass
 
 
-class UndefinedField(MongoextException):
+class CastError(MongoextException):
+    pass
+
+
+class SchemeError(MongoextException):
     pass

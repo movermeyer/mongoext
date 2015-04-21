@@ -1,31 +1,52 @@
 from __future__ import absolute_import
 
-import collections
-import datetime
+import mongoext.exc as exc
+
+
+class Scheme(object):
+    def __init__(self, fields):
+        self.fields = fields
+
+    def process(self, data):
+        result = {}
+        for name, value in data.items():
+            if name not in self.fields:
+                raise exc.SchemeError(name)
+            result[name] = self.fields[name].cast(value)
+        return result
 
 
 class Field(object):
-    def __init__(self, required=False):
-        self.required = required
+    def __init__(self):
+        self.value = None
 
-    def __call__(self, val):
+    def __get__(self, obj, type_):
+        return self.value
+
+    def __set__(self, obj, val):
+        self.cast(val)
+        self.value = val
+
+    def cast(self, val):
         return val
 
 
-# class String(Field):
-#     def __call__(self, val):
-#         try:
-#             return unicode(val)
-#         except TypeError:
-#             raise ValueError('String object required')
+class Unicode(Field):
+    def cast(self, val):
+        ''' Cast value to unicode. '''
+        try:
+            return unicode(val)
+        except TypeError:
+            raise exc.CastError('String is required: {}'.format(val))
 
 
-# class Numeric(Field):
-#     def __call__(self, val):
-#         try:
-#             return int(val)
-#         except (TypeError, ValueError):
-#             raise ValueError('Integer object required')
+class Numeric(Field):
+    def cast(self, val):
+        ''' Cast value to unicode. '''
+        try:
+            return int(val)
+        except (TypeError, ValueError):
+            raise exc.CastError('Integer is required: {}'.format(val))
 
 
 # class List(Field):

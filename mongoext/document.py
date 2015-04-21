@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 import mongoext.collection
-import mongoext.fields
+import mongoext.scheme
 import mongoext.exc
 
 
@@ -10,12 +10,12 @@ class MetaDocument(type):
         fields = {}
         for base in bases:
             for attr, obj in vars(base).iteritems():
-                if issubclass(type(obj), mongoext.fields.Field):
+                if issubclass(type(obj), mongoext.scheme.Field):
                     fields[attr] = obj
         for attr, obj in attrs.iteritems():
-            if issubclass(type(obj), mongoext.fields.Field):
+            if issubclass(type(obj), mongoext.scheme.Field):
                 fields[attr] = obj
-        attrs['FIELDS'] = fields
+        attrs['SCHEME'] = mongoext.scheme.Scheme(fields)
         return super(MetaDocument, cls).__new__(cls, name, bases, attrs)
 
     def __init__(cls, name, bases, attrs):
@@ -27,25 +27,18 @@ class MetaDocument(type):
 
 class Document(object):
     __metaclass__ = MetaDocument
-    FIELDS = None
+    SCHEME = None
 
     objects = None
 
-    _id = mongoext.fields.Field()
+    _id = mongoext.scheme.Field()
 
-    def __init__(self, **kw):
-        for name, value in kw.items():
-            if name not in self.FIELDS:
-                raise mongoext.exc.UndefinedField(name)
-
-            validate = self.FIELDS[name]
-            try:
-                setattr(self, name, validate(value))
-            except ValueError as e:
-                raise ValueError('{}: {}'.format(e.message, name))
+    def __init__(self, **data):
+        for attr, value in data.items():
+            setattr(self, attr, value)
 
     def save(self):
-        self.__init__(**vars(self))
+        pass
 
     def to_dict(self):
         return {f: getattr(self, f, None) for f in self.FIELDS}
