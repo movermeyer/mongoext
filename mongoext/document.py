@@ -39,11 +39,8 @@ class Document(object):
                 raise mongoext.exc.SchemeError(attr)
             setattr(self, attr, value)
 
-    def save(self):
-        pass
-
     def to_dict(self):
-        return {f: getattr(self, f, None) for f in self.FIELDS}
+        return {f: getattr(self, f) for f in self.SCHEME}
 
     def __repr__(self):
         return '<{}: {}>'.format(type(self).__name__, self._id)

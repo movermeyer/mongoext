@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import weakref
+
 import mongoext.exc as exc
 
 
@@ -10,20 +12,24 @@ class Scheme(object):
     def __contains__(self, field):
         return field in self.fields
 
+    def __iter__(self):
+        for field in self.fields:
+            yield field
+
 
 class Field(object):
     def __init__(self):
-        self.value = None
+        self.data = weakref.WeakKeyDictionary()
 
-    def __get__(self, obj, type_):
-        return self.value
+    def __get__(self, instance, owner):
+        return self.data.get(instance)
 
-    def __set__(self, obj, val):
-        self.cast(val)
-        self.value = val
+    def __set__(self, instance, value):
+        value = self.cast(value)
+        self.data[instance] = value
 
-    def cast(self, val):
-        return val
+    def cast(self, value):
+        return value
 
 
 class Unicode(Field):

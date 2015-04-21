@@ -30,6 +30,42 @@ class DocumentInitialization(unittest.TestCase):
         with self.assertRaises(exc.SchemeError):
             Document(user_id=1)
 
+    def test_empty_initialization(self):
+        Document()
+
+
+class DocumentSetAttribute(unittest.TestCase):
+    def setUp(self):
+        self.document = Document()
+
+    def test_set_undefined_attribute(self):
+        self.document.user_id = 1
+
+    def test_set_defined_attribute(self):
+        self.document.content = 'content'
+
+    def test_set_defined_attribute_cast_failure(self):
+        with self.assertRaises(exc.CastError):
+            self.document.client_id = 'a'
+
+
+class DocumentToDict(unittest.TestCase):
+    def test_full_document(self):
+        data = {
+            'client_id': 1,
+            'content': 'content',
+        }
+        document = Document(**data)
+        self.assertEqual(document.to_dict(), dict(data, _id=None))
+
+    def test_partial_document(self):
+        document = Document(client_id=1)
+        self.assertEqual(document.to_dict(), {
+            '_id': None,
+            'client_id': 1,
+            'content': None,
+        })
+
 # from . import fixture
 
 
