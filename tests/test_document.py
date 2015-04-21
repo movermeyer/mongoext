@@ -19,7 +19,7 @@ class Document(document.Document):
     objects = Collection()
 
 
-class DocumentInitialization(unittest.TestCase):
+class TestInitialization(unittest.TestCase):
     def test_full_success(self):
         Document(client_id=1, content='content')
 
@@ -34,7 +34,7 @@ class DocumentInitialization(unittest.TestCase):
         Document()
 
 
-class DocumentSetAttribute(unittest.TestCase):
+class TestSetAttribute(unittest.TestCase):
     def setUp(self):
         self.document = Document()
 
@@ -49,7 +49,7 @@ class DocumentSetAttribute(unittest.TestCase):
             self.document.client_id = 'a'
 
 
-class DocumentToDict(unittest.TestCase):
+class TestToDict(unittest.TestCase):
     def test_full_document(self):
         data = {
             'client_id': 1,
@@ -67,10 +67,13 @@ class DocumentToDict(unittest.TestCase):
         })
 
 
-class DocumentRepr(unittest.TestCase):
+class TestRepr(unittest.TestCase):
     def test_repr(self):
         self.assertEqual(repr(Document()), '<Document: None>')
 
+
+class TestSave(unittest.TestCase):
+    pass
 # from . import fixture
 
 
