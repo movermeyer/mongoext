@@ -3,7 +3,11 @@ from . import fixture
 
 class ModelTestCase(fixture.MongoextTestCase):
     def test_find(self):
-        cursor = fixture.Document.objects.find({'created_ts': {'$gte': 1}}, {'title': 1}).sort('created_ts')
+        fields = {
+            'created_ts': 1,
+            'title': 1,
+        }
+        cursor = fixture.Document.objects.find({'created_ts': {'$gte': 1}}, fields).sort('created_ts')
         self.assertTrue(all([lambda: isinstance(c, fixture.Document) for c in cursor]))
 
     def test_save(self):
@@ -12,7 +16,11 @@ class ModelTestCase(fixture.MongoextTestCase):
         model.save()
 
     def test_fail_save(self):
-        cursor = fixture.Document.objects.find({'created_ts': {'$gte': 1}}, {'title': 1}).sort('created_ts')
+        fields = {
+            'created_ts': 1,
+            'title': 1,
+        }
+        cursor = fixture.Document.objects.find({'created_ts': {'$gte': 1}}, fields).sort('created_ts')
         model = [c for c in cursor][0]
         model.created_ts = None
         with self.assertRaises(ValueError):

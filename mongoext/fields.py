@@ -3,11 +3,16 @@ from __future__ import absolute_import
 import collections
 import datetime
 
+import mongoext.exc
+
 
 def required(fn):
     def wrapper(self, val):
-        if val is None and self.required:
-            raise ValueError('Required')
+        if val is mongoext.exc.Missed:
+            if self.required:
+                raise ValueError('Required')
+            else:
+                return None
         return fn(self, val)
     return wrapper
 

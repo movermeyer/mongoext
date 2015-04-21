@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import mongoext.collection
 import mongoext.fields
+import mongoext.exc
 
 
 class MetaDocument(type):
@@ -31,14 +32,11 @@ class Document(object):
     _id = mongoext.fields.Field()
 
     def __init__(self, **kw):
-        for name, obj in self.FIELDS.iteritems():
-            if name in kw:
-                try:
-                    setattr(self, name, obj(kw[name]))
-                except ValueError as e:
-                    raise ValueError('{}: {}'.format(e.message, name))
-            else:
-                setattr(self, name, None)
+        for name, field in self.FIELDS.iteritems():
+            try:
+                setattr(self, name, field(kw.get(name, mongoext.exc.Missed)))
+            except ValueError as e:
+                raise ValueError('{}: {}'.format(e.message, name))
 
     def save(self):
         self.__init__(**vars(self))
