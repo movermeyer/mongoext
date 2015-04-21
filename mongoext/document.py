@@ -31,6 +31,8 @@ class Document(object):
 
     _id = mongoext.fields.Field()
 
+    objects = None
+
     def __init__(self, **kw):
         for name in self.FIELDS:
             validate = self.FIELDS[name]
