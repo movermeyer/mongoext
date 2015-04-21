@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import collections
 
 
-def required_handler(fn):
+def required(fn):
     def wrapper(self, val):
         if val is None:
             if self.required:
@@ -18,19 +18,19 @@ class Field(object):
     def __init__(self, required=False):
         self.required = required
 
-    @required_handler
+    @required
     def __call__(self, val):
         return val
 
 
 class String(Field):
-    @required_handler
+    @required
     def __call__(self, val):
         return unicode(val)
 
 
 class Numeric(Field):
-    @required_handler
+    @required
     def __call__(self, val):
         return int(val)
 
@@ -42,7 +42,7 @@ class List(Field):
         self.field = field
         self.required = required
 
-    @required_handler
+    @required
     def __call__(self, val):
         if not isinstance(val, collections.Iterable):
             raise ValueError(val)
