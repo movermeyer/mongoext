@@ -18,6 +18,7 @@ setup(
     name='mongoext',
     packages=['mongoext'],
     package_data={'': ['LICENSE']},
+    install_requires=['pymongo==2.8'],
     version=version,
     description='Data models for Mongo',
     author='Andrey Gubarev',
