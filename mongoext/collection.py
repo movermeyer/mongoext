@@ -73,12 +73,21 @@ class Collection(object):
         )
         return mongoext.cursor.Cursor(self, pymongo_cursor)
 
-    def find_one(self, *args, **kw):
-        cursor = self.find(*args, **kw)
-        try:
-            return next(cursor)
-        except StopIteration:
-            return
+    def find_one(self, filter_or_id=None, *args, **kw):
+        document = self.collection.find_one(filter_or_id, *args, **kw)
+        document = self.unpack_fields(document)
+        if self._model:
+            return self._model(**document)
+        else:
+            return document
+
+    def find_one_and_replace(self, filter, replacement, projection=None):
+        pymongo_cursor = self.collection.find_one_and_replace(
+            filter=filter and self.pack_fields(filter),
+            replacement=replacement and self.pack_fields(replacement),
+            projection=projection and self.pack_fields(projection),
+        )
+        return mongoext.cursor.Cursor(self, pymongo_cursor)
 
     def insert(self, documents):
         pymongo_documents = []

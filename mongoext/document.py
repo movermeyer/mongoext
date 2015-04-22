@@ -44,7 +44,13 @@ class Document(object):
 
     def save(self):
         self.SCHEME.validate(self)
-        self.objects.save(self)
+        if self._id:
+            self.objects.find_one_and_replace(
+                filter={'_id': self._id},
+                replacement=self.to_dict(),
+            )
+        else:
+            self._id = self.objects.insert_one(self)[0]
 
     def to_dict(self):
         return {f: getattr(self, f) for f in self.SCHEME}

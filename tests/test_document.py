@@ -82,6 +82,17 @@ class TestSave(unittest.TestCase):
         document.client_id = 1
         document.content = 'content'
         document.save()
+        self.assertIsNotNone(document._id)
+
+    def test_update(self):
+        document = Document()
+        document.client_id = 1
+        document.content = 'content'
+        document.save()
+        document.content = u''
+        document.save()
+        document = Document.objects.find_one(document._id)
+        self.assertEqual(document.content, u'')
 
     def test_scheme_error_save(self):
         document = Document()
