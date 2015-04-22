@@ -103,10 +103,17 @@ class Collection(object):
         for document in pymongo_documents:
             self.clean(document)
 
-        return self.collection.insert(pymongo_documents)
+        return self.collection.insert_many(pymongo_documents)
 
     def insert_one(self, document):
-        return self.insert([document])[0]
+        if self._model and isinstance(document, self._model):
+            document = document.to_dict()
+        else:
+            raise TypeError(type(document))
+        self.clean(document)
+        document = self.pack_fields(document)
+        print document
+        return self.collection.insert_one(document).inserted_id
 
     def count(self):
         return self.collection.count()
