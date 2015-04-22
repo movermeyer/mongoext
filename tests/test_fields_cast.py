@@ -49,3 +49,14 @@ class TestListNumericField(unittest.TestCase):
     def test_invalid_str(self):
         with self.assertRaises(exc.CastError):
             self.field.cast(['a'])
+
+
+class TestInvalidListField(unittest.TestCase):
+    def test_int(self):
+        with self.assertRaises(exc.SchemeError):
+            scheme.List(int)
+
+    def test_class_field(self):
+        scheme.List(scheme.Numeric)
+        with self.assertRaises(exc.SchemeError):
+            scheme.List(scheme.Numeric)

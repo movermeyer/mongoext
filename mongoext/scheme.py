@@ -64,7 +64,7 @@ class List(Field):
         super(List, self).__init__(**kw)
 
         if field and not isinstance(field, Field):
-            raise ValueError
+            raise exc.SchemeError('Field successor instance required: {}'.format(field))
         self.field = field
 
     def cast(self, val):
