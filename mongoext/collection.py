@@ -25,7 +25,7 @@ class Collection(object):
     @property
     def collection(self):
         if not self.__pymongo_collection:
-            self.__pymongo_collection = pymongo.Connection(**self.CONNECTION)[self.DATABASE][self.NAME]
+            self.__pymongo_collection = pymongo.MongoClient(**self.CONNECTION)[self.DATABASE][self.NAME]
         return self.__pymongo_collection
 
     @property
@@ -65,10 +65,10 @@ class Collection(object):
             uncompressed_document[key] = value
         return uncompressed_document
 
-    def find(self, spec=None, fields=None, skip=0):
+    def find(self, filter=None, projection=None, skip=0):
         pymongo_cursor = self.collection.find(
-            spec=spec and self.pack_fields(spec),
-            fields=fields and self.pack_fields(fields),
+            filter=filter and self.pack_fields(filter),
+            projection=projection and self.pack_fields(projection),
             skip=skip,
         )
         return mongoext.cursor.Cursor(self, pymongo_cursor)
@@ -115,15 +115,6 @@ class Collection(object):
 
         spec = self.pack_fields(spec)
         return self.collection.remove(spec, multi=multi)
-
-    def save(self, document):
-        if not isinstance(document, dict):
-            document = document.to_dict()
-
-        self.clean(document)
-
-        document = self.pack_fields(document)
-        return self.collection.save(document)
 
     def update(self, spec, document, multi=False):
         spec = self.pack_fields(spec)
