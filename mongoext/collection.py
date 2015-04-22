@@ -106,7 +106,7 @@ class Collection(object):
         return self.collection.insert(pymongo_documents)
 
     def insert_one(self, document):
-        return self.insert([document])
+        return self.insert([document])[0]
 
     def count(self):
         return self.collection.count()

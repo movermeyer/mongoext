@@ -57,6 +57,5 @@ class TestInvalidListField(unittest.TestCase):
             scheme.List(int)
 
     def test_class_field(self):
-        scheme.List(scheme.Numeric)
         with self.assertRaises(exc.SchemeError):
             scheme.List(scheme.Numeric)

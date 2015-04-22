@@ -50,7 +50,7 @@ class Document(object):
                 replacement=self.to_dict(),
             )
         else:
-            self._id = self.objects.insert_one(self)[0]
+            self._id = self.objects.insert_one(self)
 
     def to_dict(self):
         return {f: getattr(self, f) for f in self.SCHEME}
