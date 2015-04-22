@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import collections
 import weakref
 
 import mongoext.exc as exc
@@ -57,20 +58,22 @@ class Numeric(Field):
             raise exc.CastError('Integer is required: {}'.format(val))
 
 
-# class List(Field):
-#     def __init__(self, field=None, required=False):
-#         if field and not isinstance(field, Field):
-#             raise ValueError
-#         self.field = field
-#         self.required = required
+class List(Field):
+    ''' Cast value to list. '''
+    def __init__(self, field=None, **kw):
+        super(List, self).__init__(**kw)
 
-#     def __call__(self, val):
-#         if not isinstance(val, collections.Iterable):
-#             raise ValueError('Iterable object required')
-#         if self.field:
-#             return [self.field(v) for v in val]
-#         else:
-#             return list(val)
+        if field and not isinstance(field, Field):
+            raise ValueError
+        self.field = field
+
+    def cast(self, val):
+        if not isinstance(val, collections.Iterable):
+            raise exc.CastError('Iterable object required')
+        if self.field:
+            return [self.field.cast(v) for v in val]
+        else:
+            return list(val)
 
 
 # class DateTime(Field):

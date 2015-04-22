@@ -1,6 +1,7 @@
 import unittest
 
 import mongoext.scheme as scheme
+import mongoext.exc as exc
 
 
 class TestUnicodeField(unittest.TestCase):
@@ -15,3 +16,36 @@ class TestUnicodeField(unittest.TestCase):
 
     def test_true(self):
         self.assertEqual(self.field.cast(True), u'True')
+
+
+class TestListField(unittest.TestCase):
+    def setUp(self):
+        self.field = scheme.List()
+
+    def test_list(self):
+        self.assertEqual(self.field.cast([0, 1]), [0, 1])
+
+    def test_tuple(self):
+        self.assertEqual(self.field.cast((0, 1)), [0, 1])
+
+    def test_dict(self):
+        self.assertEqual(self.field.cast({'a': 1}), ['a'])
+
+    def test_int(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast(1)
+
+
+class TestListNumericField(unittest.TestCase):
+    def setUp(self):
+        self.field = scheme.List(scheme.Numeric())
+
+    def test_list(self):
+        self.assertEqual(self.field.cast([0, 1]), [0, 1])
+
+    def test_str(self):
+        self.assertEqual(self.field.cast(['0', '1']), [0, 1])
+
+    def test_invalid_str(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast(['a'])
