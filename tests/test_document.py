@@ -19,6 +19,10 @@ class Document(document.Document):
     objects = Collection()
 
 
+def tearDownModule():
+    Collection().drop()
+
+
 class TestInitialization(unittest.TestCase):
     def test_full_success(self):
         Document(client_id=1, content='content')
@@ -73,7 +77,12 @@ class TestRepr(unittest.TestCase):
 
 
 class TestSave(unittest.TestCase):
-    pass
+    def test_save(self):
+        document = Document()
+        document.client_id = 1
+        document.content = 'content'
+        document.save()
+
 # from . import fixture
 
 

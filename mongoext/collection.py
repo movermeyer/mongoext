@@ -32,6 +32,10 @@ class Collection(object):
     def database(self):
         return self.collection.database
 
+    def clean(self, document):
+        for field in (f for f, v in document.items() if v is None):
+            del document[field]
+
     def pack_field(self, key):
         if not self.keys_compression:
             return key
@@ -88,12 +92,7 @@ class Collection(object):
         pymongo_documents = [self.pack_fields(d) for d in pymongo_documents]
 
         for document in pymongo_documents:
-            drop_fields = []
-            for field in document:
-                if document[field] is None:
-                    drop_fields.append(field)
-            for field in drop_fields:
-                del document[field]
+            self.clean(document)
 
         return self.collection.insert(pymongo_documents)
 
@@ -120,6 +119,8 @@ class Collection(object):
     def save(self, document):
         if not isinstance(document, dict):
             document = document.to_dict()
+
+        self.clean(document)
 
         document = self.pack_fields(document)
         return self.collection.save(document)
