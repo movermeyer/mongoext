@@ -13,7 +13,7 @@ class Collection(collection.Collection):
 
 
 class Document(document.Document):
-    client_id = scheme.Numeric()
+    client_id = scheme.Numeric(required=True)
     content = scheme.Unicode()
 
     objects = Collection()
@@ -82,6 +82,12 @@ class TestSave(unittest.TestCase):
         document.client_id = 1
         document.content = 'content'
         document.save()
+
+    def test_scheme_error_save(self):
+        document = Document()
+        document.content = 'content'
+        with self.assertRaises(exc.SchemeError):
+            document.save()
 
 # from . import fixture
 

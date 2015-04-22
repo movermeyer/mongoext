@@ -16,9 +16,16 @@ class Scheme(object):
         for field in self.fields:
             yield field
 
+    def validate(self, document):
+        for attr, field in self.fields.items():
+            if field.required and getattr(document, attr) is None:
+                raise exc.SchemeError('Required field is missing: {}'.format(attr))
+
 
 class Field(object):
-    def __init__(self):
+    def __init__(self, required=False):
+        self.required = required
+
         self.data = weakref.WeakKeyDictionary()
 
     def __get__(self, instance, owner):

@@ -43,6 +43,7 @@ class Document(object):
         return '<{}: {}>'.format(type(self).__name__, self._id)
 
     def save(self):
+        self.SCHEME.validate(self)
         self.objects.save(self)
 
     def to_dict(self):
