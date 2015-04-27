@@ -15,7 +15,7 @@ class MetaDocument(type):
         for attr, obj in attrs.iteritems():
             if issubclass(type(obj), mongoext.scheme.Field):
                 fields[attr] = obj
-        attrs['SCHEME'] = mongoext.scheme.Scheme(fields)
+        attrs['__scheme__'] = mongoext.scheme.Scheme(fields)
         return super(MetaDocument, cls).__new__(cls, name, bases, attrs)
 
     def __init__(cls, name, bases, attrs):
@@ -27,7 +27,7 @@ class MetaDocument(type):
 
 class Document(object):
     __metaclass__ = MetaDocument
-    SCHEME = None
+    __scheme__ = None
 
     objects = None
 
@@ -35,7 +35,7 @@ class Document(object):
 
     def __init__(self, **data):
         for attr, value in data.items():
-            if attr not in self.SCHEME:
+            if attr not in self.__scheme__:
                 raise mongoext.exc.SchemeError(attr)
             setattr(self, attr, value)
 
@@ -43,7 +43,7 @@ class Document(object):
         return '<{}: {}>'.format(type(self).__name__, self._id)
 
     def save(self):
-        self.SCHEME.validate(self)
+        self.__scheme__.validate(self)
         if self._id:
             self.objects.find_one_and_replace(
                 filter={'_id': self._id},
@@ -53,4 +53,4 @@ class Document(object):
             self._id = self.objects.insert_one(self)
 
     def to_dict(self):
-        return {f: getattr(self, f) for f in self.SCHEME}
+        return {f: getattr(self, f) for f in self.__scheme__}
