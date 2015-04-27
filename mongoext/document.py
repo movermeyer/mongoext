@@ -28,7 +28,6 @@ class Document(object):
     _id = mongoext.scheme.Field()
 
     def __init__(self, **data):
-        print data
         for name, value in data.items():
             if name not in self.__scheme__:
                 raise mongoext.exc.SchemeError(name)
