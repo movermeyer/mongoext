@@ -3,6 +3,11 @@
 Changelog
 ---------
 
+0.3.1
+++++++++++++++++++
+
+- Remove Document to Collection link
+
 0.3.0 (2015-04-27)
 ++++++++++++++++++
 
