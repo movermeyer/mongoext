@@ -22,7 +22,7 @@ class MetaDocument(abc.ABCMeta):
         return super(MetaDocument, cls).__new__(cls, name, bases, attrs)
 
 
-class Document(collections.MutableMapping):
+class Document(collections.Container, collections.Hashable, collections.Sized, collections.Iterable):
     __metaclass__ = MetaDocument
     __scheme__ = None
 
@@ -34,24 +34,18 @@ class Document(collections.MutableMapping):
                 raise mongoext.exc.SchemeError(name)
             setattr(self, name, value)
 
-    def __repr__(self):
-        return '<{}: {}>'.format(type(self).__name__, self._id)
-
-    def __getitem__(self, name):
-        return self.__getattribute__(name)
-
-    def __setitem__(self, name, value):
-        return self.__setattr__(name, value)
-
-    def __delitem__(self, name):
-        return self.__delattr__(name)
+    def __contains__(self, name):
+        return name in self.__scheme__
 
     def __len__(self):
         return len(self.__scheme__)
 
     def __iter__(self):
         for name in self.__scheme__:
-            yield name
+            yield name, getattr(self, name)
 
     def __hash__(self):
         return super(object, self).__hash__()
+
+    def __repr__(self):
+        return '<{}: {}>'.format(type(self).__name__, self._id)
