@@ -16,11 +16,15 @@ class Document(document.Document):
     client_id = scheme.Numeric(required=True)
     content = scheme.Unicode()
 
-    objects = Collection()
+
+class CreatedDocument(document.Document):
+    client_id = scheme.Numeric(required=True)
+    content = scheme.Unicode()
+    created = scheme.DateTime(required=True, autoadd=True)
 
 
 def tearDownModule():
-    Collection().drop()
+    Collection(Document).drop()
 
 
 class TestInitialization(unittest.TestCase):
@@ -77,28 +81,36 @@ class TestRepr(unittest.TestCase):
 
 
 class TestSave(unittest.TestCase):
+    def setUp(self):
+        self.collection = Collection(Document)
+
     def test_save(self):
         document = Document()
         document.client_id = 1
         document.content = 'content'
-        document.save()
+        self.collection.save(document)
         self.assertIsNotNone(document._id)
 
     def test_update(self):
         document = Document()
         document.client_id = 1
         document.content = 'content'
-        document.save()
+        self.collection.save(document)
         document.content = u''
-        document.save()
-        document = Document.objects.find_one(document._id)
+        self.collection.save(document)
+        document = self.collection.find_one(document._id)
         self.assertEqual(document.content, u'')
 
-    def test_scheme_error_save(self):
-        document = Document()
-        document.content = 'content'
-        with self.assertRaises(exc.SchemeError):
-            document.save()
+    # def test_scheme_error_save(self):
+    #     document = Document()
+    #     document.content = 'content'
+    #     with self.assertRaises(exc.SchemeError):
+    #         self.collection.save(document)
+
+    # def test_created_autoadd(self):
+    #     document = CreatedDocument()
+    #     document.client_id = 1
+    #     document.save()
 
 # from . import fixture
 

@@ -12,8 +12,8 @@ class Collection(object):
     KEYS_COMPRESSION = None
     NAME = None
 
-    def __init__(self):
-        self._model = None
+    def __init__(self, model):
+        self.model = model
         self.__pymongo_collection = None
 
         if self.KEYS_COMPRESSION:
@@ -76,8 +76,8 @@ class Collection(object):
     def find_one(self, filter_or_id=None, *args, **kw):
         document = self.collection.find_one(filter_or_id, *args, **kw)
         document = self.unpack_fields(document)
-        if self._model:
-            return self._model(**document)
+        if self.model:
+            return self.model(**document)
         else:
             return document
 
@@ -92,7 +92,7 @@ class Collection(object):
     def insert(self, documents):
         pymongo_documents = []
         for document in documents:
-            if self._model and isinstance(document, self._model):
+            if self.model and isinstance(document, self.model):
                 pymongo_documents.append(document.to_dict())
             elif isinstance(document, dict):
                 pymongo_documents.append(document)
@@ -106,7 +106,7 @@ class Collection(object):
         return self.collection.insert_many(pymongo_documents)
 
     def insert_one(self, document):
-        if self._model and isinstance(document, self._model):
+        if self.model and isinstance(document, self.model):
             document = document.to_dict()
         else:
             raise TypeError(type(document))
@@ -114,6 +114,18 @@ class Collection(object):
         document = self.pack_fields(document)
         print document
         return self.collection.insert_one(document).inserted_id
+
+    def save(self, document):
+        if not (self.model and isinstance(document, self.model)):
+            raise TypeError(type(document))
+
+        if document._id:
+            self.find_one_and_replace(
+                filter={'_id': document._id},
+                replacement=document.to_dict(),
+            )
+        else:
+            document._id = self.insert_one(document)
 
     def count(self):
         return self.collection.count()
