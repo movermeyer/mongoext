@@ -77,46 +77,46 @@ class TestDateTime(unittest.TestCase):
             self.field.cast(None)
 
 
-# class TestDict(unittest.TestCase):
-#     def setUp(self):
-#         self.field = fields.Dict()
+class TestDict(unittest.TestCase):
+    def setUp(self):
+        self.field = scheme.Dict()
 
-#     def test_random_values(self):
-#         self.assertEqual(self.field.cast({'a': 1}), {'a': 1})
+    def test_random_values(self):
+        self.assertEqual(self.field.cast({'a': 1}), {'a': 1})
 
-#     def test_empty_dict(self):
-#         self.assertEqual(self.field.cast({}), {})
+    def test_empty_dict(self):
+        self.assertEqual(self.field.cast({}), {})
 
-#     def test_non_mapping_none(self):
-#         with self.assertRaises(exc.CastError):
-#             self.field.cast(None)
+    def test_non_mapping_none(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast(None)
 
-#     def test_non_mapping_int(self):
-#         with self.assertRaises(exc.CastError):
-#             self.field.cast(1)
+    def test_non_mapping_int(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast(1)
 
 
-# class TestNumericDict(unittest.TestCase):
-#     def setUp(self):
-#         self.field = fields.Dict(fields.Numeric())
+class TestNumericDict(unittest.TestCase):
+    def setUp(self):
+        self.field = scheme.Dict(scheme.Numeric())
 
-#     def test_random_values(self):
-#         self.assertEqual(self.field.cast({'a': 1}), {'a': 1})
+    def test_random_values(self):
+        self.assertEqual(self.field.cast({'a': 1}), {'a': 1})
 
-#     def test_random_valid_values(self):
-#         self.assertEqual(self.field.cast({'a': '1'}), {'a': 1})
+    def test_random_valid_values(self):
+        self.assertEqual(self.field.cast({'a': '1'}), {'a': 1})
 
-#     def test_empty_dict(self):
-#         self.assertEqual(self.field.cast({}), {})
+    def test_empty_dict(self):
+        self.assertEqual(self.field.cast({}), {})
 
-#     def test_invalid_values(self):
-#         with self.assertRaises(exc.CastError):
-#             self.field.cast({'a': 'a'})
+    def test_invalid_values(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast({'a': 'a'})
 
-#     def test_non_mapping_none(self):
-#         with self.assertRaises(exc.CastError):
-#             self.field.cast(None)
+    def test_non_mapping_none(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast(None)
 
-#     def test_non_mapping_int(self):
-#         with self.assertRaises(exc.CastError):
-#             self.field.cast(1)
+    def test_non_mapping_int(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast(1)

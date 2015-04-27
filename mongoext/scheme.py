@@ -91,17 +91,18 @@ class DateTime(Field):
         return val
 
 
-# class Dict(Field):
-#     def __init__(self, field=None, required=False):
-#         if field and not isinstance(field, Field):
-#             raise ValueError
-#         self.field = field
-#         self.required = required
+class Dict(Field):
+    def __init__(self, field=None, **kw):
+        super(Dict, self).__init__(**kw)
 
-#     def __call__(self, val):
-#         if not isinstance(val, collections.Mapping):
-#             raise ValueError('Mapping object required')
-#         if self.field:
-#             return {k: self.field(v) for k, v in val.items()}
-#         else:
-#             return dict(val)
+        if field and not isinstance(field, Field):
+            raise exc.SchemeError('Field successor instance required: {}'.format(field))
+        self.field = field
+
+    def cast(self, val):
+        if not isinstance(val, collections.Mapping):
+            raise exc.CastError('Mapping object required')
+        if self.field:
+            return {k: self.field.cast(v) for k, v in val.items()}
+        else:
+            return dict(val)
