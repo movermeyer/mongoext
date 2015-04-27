@@ -37,6 +37,9 @@ class Field(object):
         value = self.cast(value)
         self.data[instance] = value
 
+    def __delete__(self, instance):
+        del self.data[instance]
+
     def cast(self, value):
         return value
 
