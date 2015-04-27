@@ -64,11 +64,11 @@ class TestToDict(unittest.TestCase):
             'content': 'content',
         }
         document = Document(**data)
-        self.assertEqual(document.to_dict(), dict(data, _id=None))
+        self.assertEqual(dict(document), dict(data, _id=None))
 
     def test_partial_document(self):
         document = Document(client_id=1)
-        self.assertEqual(document.to_dict(), {
+        self.assertEqual(dict(document), {
             '_id': None,
             'client_id': 1,
             'content': None,

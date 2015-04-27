@@ -93,7 +93,7 @@ class Collection(object):
         pymongo_documents = []
         for document in documents:
             if self.model and isinstance(document, self.model):
-                pymongo_documents.append(document.to_dict())
+                pymongo_documents.append(dict(document))
             elif isinstance(document, dict):
                 pymongo_documents.append(document)
             else:
@@ -107,12 +107,11 @@ class Collection(object):
 
     def insert_one(self, document):
         if self.model and isinstance(document, self.model):
-            document = document.to_dict()
+            document = dict(document)
         else:
             raise TypeError(type(document))
         self.clean(document)
         document = self.pack_fields(document)
-        print document
         return self.collection.insert_one(document).inserted_id
 
     def save(self, document):
@@ -122,7 +121,7 @@ class Collection(object):
         if document._id:
             self.find_one_and_replace(
                 filter={'_id': document._id},
-                replacement=document.to_dict(),
+                replacement=dict(document),
             )
         else:
             document._id = self.insert_one(document)
