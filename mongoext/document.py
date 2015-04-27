@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import abc
 import collections
 
 import mongoext.collection
@@ -8,7 +7,7 @@ import mongoext.scheme
 import mongoext.exc
 
 
-class MetaDocument(abc.ABCMeta):
+class MetaDocument(type):
     def __new__(cls, name, bases, attrs):
         fields = {}
         for base in bases:
@@ -22,13 +21,14 @@ class MetaDocument(abc.ABCMeta):
         return super(MetaDocument, cls).__new__(cls, name, bases, attrs)
 
 
-class Document(collections.Container, collections.Hashable, collections.Sized, collections.Iterable):
+class Document(object):
     __metaclass__ = MetaDocument
     __scheme__ = None
 
     _id = mongoext.scheme.Field()
 
     def __init__(self, **data):
+        print data
         for name, value in data.items():
             if name not in self.__scheme__:
                 raise mongoext.exc.SchemeError(name)

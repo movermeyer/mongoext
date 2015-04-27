@@ -18,8 +18,8 @@ class Document(document.Document):
 
 
 class CreatedDocument(document.Document):
-    client_id = scheme.Numeric(required=True)
     content = scheme.Unicode()
+    client_id = scheme.Numeric(required=True)
     created = scheme.DateTime(required=True, autoadd=True)
 
 

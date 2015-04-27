@@ -9,6 +9,7 @@ import mongoext.exc as exc
 
 class Scheme(object):
     def __init__(self, fields):
+        print fields
         self.fields = fields
 
     def __contains__(self, field):
@@ -31,6 +32,7 @@ class Field(object):
         self.data = weakref.WeakKeyDictionary()
 
     def __get__(self, instance, owner):
+        print self.data
         return self.data.get(instance)
 
     def __set__(self, instance, value):
