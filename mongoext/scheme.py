@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import collections
+import datetime
 import weakref
 
 import mongoext.exc as exc
@@ -76,17 +77,18 @@ class List(Field):
             return list(val)
 
 
-# class DateTime(Field):
-#     def __init__(self, required=False, autoadd=False):
-#         self.required = required
-#         self.autoadd = autoadd
+class DateTime(Field):
+    def __init__(self, autoadd=False, **kw):
+        super(DateTime, self).__init__(**kw)
 
-#     def __call__(self, val):
-#         if self.autoadd:
-#             val = datetime.datetime.now()
-#         if not isinstance(val, datetime.datetime):
-#             raise ValueError('Datetime object required')
-#         return val
+        self.autoadd = autoadd
+
+    def cast(self, val):
+        if self.autoadd:
+            val = datetime.datetime.now()
+        if not isinstance(val, datetime.datetime):
+            raise exc.CastError('Datetime object required')
+        return val
 
 
 # class Dict(Field):
