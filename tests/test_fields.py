@@ -17,6 +17,39 @@ class TestNumeric(unittest.TestCase):
             self.field.cast('a')
 
 
+class TestUnicodeField(unittest.TestCase):
+    def setUp(self):
+        self.field = scheme.Unicode()
+
+    def test_int(self):
+        self.assertEqual(self.field.cast(1), u'1')
+
+    def test_zero(self):
+        self.assertEqual(self.field.cast(0), u'0')
+
+    def test_true(self):
+        self.assertEqual(self.field.cast(True), u'True')
+
+
+class TestList(unittest.TestCase):
+    def setUp(self):
+        self.field = scheme.List()
+
+    def test_random_values(self):
+        self.assertEqual(self.field.cast([1, '1']), [1, '1'])
+
+    def test_empty_list(self):
+        self.assertEqual(self.field.cast([]), [])
+
+    def test_non_iterable_none(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast(None)
+
+    def test_non_iterable_int(self):
+        with self.assertRaises(exc.CastError):
+            self.field.cast(1)
+
+
 class TestNumericListField(unittest.TestCase):
     def setUp(self):
         self.field = scheme.List(scheme.Numeric())
@@ -40,23 +73,14 @@ class TestNumericListField(unittest.TestCase):
             self.field.cast(1)
 
 
-class TestList(unittest.TestCase):
-    def setUp(self):
-        self.field = scheme.List()
+class TestInvalidListField(unittest.TestCase):
+    def test_int(self):
+        with self.assertRaises(exc.SchemeError):
+            scheme.List(int)
 
-    def test_random_values(self):
-        self.assertEqual(self.field.cast([1, '1']), [1, '1'])
-
-    def test_empty_list(self):
-        self.assertEqual(self.field.cast([]), [])
-
-    def test_non_iterable_none(self):
-        with self.assertRaises(exc.CastError):
-            self.field.cast(None)
-
-    def test_non_iterable_int(self):
-        with self.assertRaises(exc.CastError):
-            self.field.cast(1)
+    def test_class_field(self):
+        with self.assertRaises(exc.SchemeError):
+            scheme.List(scheme.Numeric)
 
 
 class TestDateTimeAutoadd(unittest.TestCase):
