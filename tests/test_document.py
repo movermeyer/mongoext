@@ -6,14 +6,11 @@ import mongoext.collection as collection
 # import mongoext.scheme as scheme
 
 
-class Connection(collection.Connection):
-    URI = 'mongodb://localhost:27017/'
+class Collection(collection.Collection):
+    CONNECTION = {'host': 'localhost', 'port': 27017}
 
-
-# class Collection(collection.Collection):
-#     CONNECTION = {'host': 'localhost', 'port': 27017}
-#     DATABASE = 'db'
-#     NAME = 'collection'
+    DATABASE = 'db'
+    NAME = 'collection'
 
 
 # class Document(document.Document):

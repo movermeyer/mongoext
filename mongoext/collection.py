@@ -5,19 +5,6 @@ import pymongo
 import mongoext.cursor
 
 
-class Connection(object):
-    URI = None
-
-    def __init__(self):
-        self._client = None
-
-    @property
-    def client(self):
-        if not self._client:
-            self._client = pymongo.MongoClient(**self.URI)
-        return self._client
-
-
 class Collection(object):
     CONNECTION = None
     DATABASE = None
