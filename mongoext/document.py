@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-import collections
-
 import mongoext.collection
 import mongoext.scheme
 import mongoext.exc
@@ -41,7 +39,7 @@ class Document(object):
 
     def __iter__(self):
         for name in self.__scheme__:
-            yield name, getattr(self, name)
+            yield name, getattr(self, name, None)
 
     def __hash__(self):
         return super(object, self).__hash__()
