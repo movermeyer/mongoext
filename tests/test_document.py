@@ -1,9 +1,13 @@
-# import unittest
+import unittest
 
-# import mongoext.collection as collection
+import mongoext.collection as collection
 # import mongoext.document as document
 # import mongoext.exc as exc
 # import mongoext.scheme as scheme
+
+
+class Connection(collection.Connection):
+    URI = 'mongodb://localhost:27017/'
 
 
 # class Collection(collection.Collection):
