@@ -10,6 +10,7 @@ Changelog
 - Rename Unicode field to String
 - Extract AbstractField
 - Extract separate mongoext.field module
+- Rename Field.cast to Field.process
 
 0.3.0 (2015-04-27)
 ++++++++++++++++++

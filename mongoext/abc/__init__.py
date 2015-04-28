@@ -15,5 +15,5 @@ class AbstractField(object):
     def __delete__(self, instance):
         del self.data[instance]
 
-    def cast(self, value):
+    def process(self, value):
         raise NotImplementedError

@@ -15,7 +15,7 @@ class Field(abc.AbstractField):
 
 
 class String(Field):
-    def cast(self, value):
+    def process(self, value):
         ''' Cast valueue to String. '''
         try:
             return str(value)
@@ -24,7 +24,7 @@ class String(Field):
 
 
 class Numeric(Field):
-    def cast(self, value):
+    def process(self, value):
         ''' Cast valueue to String. '''
         try:
             return int(value)
@@ -41,11 +41,11 @@ class List(Field):
             raise exc.SchemeError('Field successor instance required: {}'.format(field))
         self.field = field
 
-    def cast(self, value):
+    def process(self, value):
         if not isinstance(value, collections.Iterable):
             raise exc.CastError('Iterable object required')
         if self.field:
-            return [self.field.cast(v) for v in value]
+            return [self.field.process(v) for v in value]
         else:
             return list(value)
 
@@ -56,7 +56,8 @@ class DateTime(Field):
 
         self.autoadd = autoadd
 
-    def cast(self, value):
+    def process(self, value):
+        ''' Cast valueu to datetime instance. '''
         if self.autoadd:
             value = datetime.datetime.now()
         if not isinstance(value, datetime.datetime):
@@ -72,10 +73,10 @@ class Dict(Field):
             raise exc.SchemeError('Field successor instance required: {}'.format(field))
         self.field = field
 
-    def cast(self, value):
+    def process(self, value):
         if not isinstance(value, collections.Mapping):
             raise exc.CastError('Mapping object required')
         if self.field:
-            return {k: self.field.cast(v) for k, v in value.items()}
+            return {k: self.field.process(v) for k, v in value.items()}
         else:
             return dict(value)
