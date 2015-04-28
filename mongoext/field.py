@@ -16,7 +16,7 @@ class Field(abc.AbstractField):
 
 class String(Field):
     def process(self, value):
-        ''' Cast valueue to String. '''
+        ''' Process value to String. '''
         try:
             return str(value)
         except TypeError:
@@ -25,7 +25,7 @@ class String(Field):
 
 class Numeric(Field):
     def process(self, value):
-        ''' Cast valueue to String. '''
+        ''' Process value to String. '''
         try:
             return int(value)
         except (TypeError, ValueError):
@@ -33,7 +33,7 @@ class Numeric(Field):
 
 
 class List(Field):
-    ''' Cast valueue to list. '''
+    ''' Process value to list. '''
     def __init__(self, field=None, **kw):
         super(List, self).__init__(**kw)
 
@@ -57,7 +57,7 @@ class DateTime(Field):
         self.autoadd = autoadd
 
     def process(self, value):
-        ''' Cast valueu to datetime instance. '''
+        ''' Process valueu to datetime instance. '''
         if self.autoadd:
             value = datetime.datetime.now()
         if not isinstance(value, datetime.datetime):
