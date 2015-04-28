@@ -11,6 +11,7 @@ Changelog
 - Extract AbstractField
 - Extract separate mongoext.field module
 - Rename Field.cast to Field.process
+- Rename Scheme.validate to Scheme.process
 
 0.3.0 (2015-04-27)
 ++++++++++++++++++

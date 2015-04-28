@@ -14,7 +14,7 @@ class Scheme(object):
         for field in self.fields:
             yield field
 
-    def validate(self, document):
+    def process(self, document):
         for attr, field in self.fields.items():
             if field.required and getattr(document, attr) is None:
                 raise exc.SchemeError('Required field is missing: {}'.format(attr))
