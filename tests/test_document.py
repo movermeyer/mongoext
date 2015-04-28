@@ -14,12 +14,12 @@ class Collection(collection.Collection):
 
 
 # class Document(document.Document):
-#     content = scheme.Unicode()
+#     content = scheme.String()
 #     client_id = scheme.Numeric(required=True)
 
 
 # class CreatedDocument(document.Document):
-#     content = scheme.Unicode()
+#     content = scheme.String()
 #     client_id = scheme.Numeric(required=True)
 #     created = scheme.DateTime(required=True, autoadd=True)
 

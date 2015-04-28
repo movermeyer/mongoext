@@ -7,6 +7,7 @@ Changelog
 ++++++++++++++++++
 
 - Remove Document to Collection link
+- Rename Unicode field to String
 
 0.3.0 (2015-04-27)
 ++++++++++++++++++

@@ -46,18 +46,18 @@ class Field(object):
         return value
 
 
-class Unicode(Field):
+class String(Field):
     def cast(self, val):
-        ''' Cast value to unicode. '''
+        ''' Cast value to String. '''
         try:
-            return unicode(val)
+            return String(val)
         except TypeError:
             raise exc.CastError('String is required: {}'.format(val))
 
 
 class Numeric(Field):
     def cast(self, val):
-        ''' Cast value to unicode. '''
+        ''' Cast value to String. '''
         try:
             return int(val)
         except (TypeError, ValueError):

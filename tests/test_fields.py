@@ -17,9 +17,9 @@
 #             self.field.cast('a')
 
 
-# class TestUnicodeField(unittest.TestCase):
+# class TestStringField(unittest.TestCase):
 #     def setUp(self):
-#         self.field = scheme.Unicode()
+#         self.field = scheme.String()
 
 #     def test_int(self):
 #         self.assertEqual(self.field.cast(1), u'1')
