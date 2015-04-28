@@ -2,8 +2,8 @@ from __future__ import absolute_import
 
 import collections
 import datetime
-import weakref
 
+import mongoext.abc as abc
 import mongoext.exc as exc
 
 
@@ -25,32 +25,18 @@ class Scheme(object):
                 raise exc.SchemeError('Required field is missing: {}'.format(attr))
 
 
-class Field(object):
-    def __init__(self, required=False):
+class Field(abc.AbstractField):
+    def __init__(self, required=False, **kw):
+        super(Field, self).__init__(**kw)
+
         self.required = required
-
-        self.data = weakref.WeakKeyDictionary()
-
-    def __get__(self, instance, owner):
-        print self.data
-        return self.data.get(instance)
-
-    def __set__(self, instance, value):
-        value = self.cast(value)
-        self.data[instance] = value
-
-    def __delete__(self, instance):
-        del self.data[instance]
-
-    def cast(self, value):
-        return value
 
 
 class String(Field):
     def cast(self, val):
         ''' Cast value to String. '''
         try:
-            return String(val)
+            return str(val)
         except TypeError:
             raise exc.CastError('String is required: {}'.format(val))
 
