@@ -1,26 +1,26 @@
 from __future__ import absolute_import
 
 import mongoext.collection
-import mongoext.scheme
+import mongoext.schema
 import mongoext.exc
 
 
-class MetaDocument(type):
+class MetaSchema(type):
     def __new__(cls, name, bases, attrs):
-        fields = {}
+        schema = {}
         for base in bases:
             for name, obj in vars(base).iteritems():
-                if issubclass(type(obj), mongoext.scheme.Field):
-                    fields[name] = obj
+                if issubclass(type(obj), mongoext.schema.Descriptor):
+                    schema[name] = obj
         for name, obj in attrs.iteritems():
-            if issubclass(type(obj), mongoext.scheme.Field):
-                fields[name] = obj
-        attrs['__scheme__'] = mongoext.scheme.Scheme(fields)
-        return super(MetaDocument, cls).__new__(cls, name, bases, attrs)
+            if issubclass(type(obj), mongoext.schema.Descriptor):
+                schema[name] = obj
+        attrs['__scheme__'] = schema
+        return super(MetaSchema, cls).__new__(cls, name, bases, attrs)
 
 
 class Document(object):
-    __metaclass__ = MetaDocument
+    __metaclass__ = MetaSchema
     __scheme__ = None
 
     _id = mongoext.scheme.Field()
