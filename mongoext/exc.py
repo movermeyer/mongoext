@@ -2,9 +2,9 @@ class MongoextException(Exception):
     pass
 
 
-class CastError(MongoextException):
+class ValidationError(MongoextException):
     pass
 
 
-class SchemeError(MongoextException):
+class SchemaError(MongoextException):
     pass
