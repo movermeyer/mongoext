@@ -9,7 +9,7 @@ class AbstractField(object):
         return self.data.get(instance)
 
     def __set__(self, instance, value):
-        value = self.cast(value)
+        value = self.process(value)
         self.data[instance] = value
 
     def __delete__(self, instance):
