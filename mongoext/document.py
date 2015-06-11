@@ -23,7 +23,7 @@ class Document(object):
     __metaclass__ = MetaSchema
     __scheme__ = None
 
-    _id = mongoext.scheme.Field()
+    _id = mongoext.schema.Field()
 
     def __init__(self, **data):
         for name, value in data.items():
