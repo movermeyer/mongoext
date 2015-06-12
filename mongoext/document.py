@@ -15,7 +15,7 @@ class MetaSchema(type):
         for name, obj in attrs.iteritems():
             if issubclass(type(obj), mongoext.schema.Descriptor):
                 schema[name] = obj
-        attrs['__scheme__'] = schema
+        attrs['__schema__'] = schema
         return super(MetaSchema, cls).__new__(cls, name, bases, attrs)
 
 
@@ -26,9 +26,8 @@ class Document(object):
     _id = mongoext.schema.Field()
 
     def __init__(self, **data):
+        data = mongoext.schema.process(self.__schema__, data, weak=True)
         for name, value in data.items():
-            if name not in self.__scheme__:
-                raise mongoext.exc.SchemeError(name)
             setattr(self, name, value)
 
     def __contains__(self, name):
