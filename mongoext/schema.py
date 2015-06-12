@@ -1,8 +1,10 @@
 import schematec.abc
-import schematec.schema
 import schematec.converters
+import schematec.exc
+import schematec.schema
 import schematec.validators
 
+from . import exc
 
 Schema = schematec.schema.Dictionary
 
@@ -22,4 +24,9 @@ String = schematec.converters.String
 
 Required = schematec.validators.Required
 
-process = schematec.schema.process
+
+def process(schema, data, weak=False):
+    try:
+        return schematec.schema.process(schema, data, weak=weak)
+    except schematec.exc.ValidationError as e:
+        raise exc.SchemaError(e)
