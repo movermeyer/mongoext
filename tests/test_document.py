@@ -57,3 +57,8 @@ class TestToDict(unittest.TestCase):
         })
 
 
+class TestRepr(unittest.TestCase):
+    def test_repr(self):
+        self.assertEqual(repr(Document()), '<Document: None>')
+
+
