@@ -1,12 +1,13 @@
 from __future__ import absolute_import
 
+import mongoext.abc
 import mongoext.collection
 import mongoext.schema
 import mongoext.exc
 
 
 class MetaSchema(type):
-    def __new__(cls, name, bases, attrs):
+    def __new__(cls, class_name, bases, attrs):
         schema = {}
         for base in bases:
             for name, obj in vars(base).iteritems():
@@ -15,8 +16,11 @@ class MetaSchema(type):
         for name, obj in attrs.iteritems():
             if issubclass(type(obj), mongoext.schema.Descriptor):
                 schema[name] = obj
+
         attrs['__schema__'] = schema
-        return super(MetaSchema, cls).__new__(cls, name, bases, attrs)
+        for name, descriptor in schema.items():
+            attrs[name] = mongoext.abc.AbstractField(descriptor)
+        return super(MetaSchema, cls).__new__(cls, class_name, bases, attrs)
 
 
 class Document(object):
