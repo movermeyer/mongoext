@@ -7,19 +7,22 @@ import mongoext.exc
 
 
 class MetaSchema(type):
+    FIELD = (mongoext.abc.AbstractField, mongoext.schema.Descriptor)
+
     def __new__(cls, class_name, bases, attrs):
         schema = {}
         for base in bases:
             for name, obj in vars(base).iteritems():
-                if issubclass(type(obj), mongoext.schema.Descriptor):
+                if issubclass(type(obj), cls.FIELD):
                     schema[name] = obj
         for name, obj in attrs.iteritems():
-            if issubclass(type(obj), mongoext.schema.Descriptor):
+            if issubclass(type(obj), cls.FIELD):
                 schema[name] = obj
-
         attrs['__schema__'] = schema
         for name, descriptor in schema.items():
-            attrs[name] = mongoext.abc.AbstractField(descriptor)
+            if not isinstance(descriptor, mongoext.abc.AbstractField):
+                descriptor = mongoext.abc.AbstractField(descriptor)
+            attrs[name] = descriptor
         return super(MetaSchema, cls).__new__(cls, class_name, bases, attrs)
 
 
