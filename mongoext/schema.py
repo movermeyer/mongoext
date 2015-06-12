@@ -4,7 +4,10 @@ import schematec.exc
 import schematec.schema
 import schematec.validators
 
-from . import exc
+from . import (
+    abc,
+    exc,
+)
 
 Schema = schematec.schema.Dictionary
 
@@ -26,7 +29,13 @@ Required = schematec.validators.Required
 
 
 def process(schema, data, weak=False):
+    schematec_schema = {}
+    for field, descriptor in schema.items():
+        if isinstance(descriptor, abc.AbstractField):
+            descriptor = descriptor.descriptors
+        schematec_schema[field] = descriptor
+
     try:
-        return schematec.schema.process(schema, data, weak=weak)
+        return schematec.schema.process(schematec_schema, data, weak=weak)
     except schematec.exc.ValidationError as e:
         raise exc.SchemaError(e)
