@@ -45,7 +45,7 @@ class Document(object):
             yield name, getattr(self, name, None)
 
     def __hash__(self):
-        return super(object, self).__hash__()
+        return id(self)
 
     def __repr__(self):
         return '<{}: {}>'.format(type(self).__name__, self._id)
