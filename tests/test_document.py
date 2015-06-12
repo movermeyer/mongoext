@@ -1,5 +1,6 @@
 import unittest
 
+import mongoext.collection as collection
 import mongoext.document as document
 import mongoext.schema as schema
 import mongoext.exc as exc
@@ -61,4 +62,42 @@ class TestRepr(unittest.TestCase):
     def test_repr(self):
         self.assertEqual(repr(Document()), '<Document: None>')
 
+
+class Collection(collection.Collection):
+    CONNECTION = {'host': 'localhost', 'port': 27017}
+
+    DATABASE = 'db'
+    NAME = 'collection'
+
+
+def tearDownModule():
+    Collection(Document).drop()
+
+
+class TestSave(unittest.TestCase):
+    def setUp(self):
+        self.collection = Collection(Document)
+
+    def test_save(self):
+        document = Document()
+        document.client_id = 1
+        document.content = 'content'
+        self.collection.save(document)
+        self.assertIsNotNone(document._id)
+
+    def test_update(self):
+        document = Document()
+        document.client_id = 1
+        document.content = 'content'
+        self.collection.save(document)
+        document.content = u''
+        self.collection.save(document)
+        document = self.collection.find_one(document._id)
+        self.assertEqual(document.content, u'')
+
+    def test_scheme_error_save(self):
+        document = Document()
+        document.content = 'content'
+        with self.assertRaises(exc.ValidationError):
+            self.collection.save(document)
 
