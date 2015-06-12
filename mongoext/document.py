@@ -25,7 +25,7 @@ class MetaSchema(type):
 
 class Document(object):
     __metaclass__ = MetaSchema
-    __scheme__ = None
+    __schema__ = None
 
     _id = mongoext.schema.Field()
 
@@ -35,13 +35,13 @@ class Document(object):
             setattr(self, name, value)
 
     def __contains__(self, name):
-        return name in self.__scheme__
+        return name in self.__schema__
 
     def __len__(self):
-        return len(self.__scheme__)
+        return len(self.__schema__)
 
     def __iter__(self):
-        for name in self.__scheme__:
+        for name in self.__schema__:
             yield name, getattr(self, name, None)
 
     def __hash__(self):
