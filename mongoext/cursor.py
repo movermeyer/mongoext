@@ -9,16 +9,16 @@ class Cursor(object):
     def __iter__(self):
         for document in self.__pymongo_cursor:
             document = self.collection.unpack_fields(document)
-            if self.collection._model:
-                yield self.collection._model(**document)
+            if self.collection.model:
+                yield self.collection.model(**document)
             else:
                 yield document
 
     def next(self):
         document = next(self.__pymongo_cursor)
         document = self.collection.unpack_fields(document)
-        if self.collection._model:
-            return self.collection._model(**document)
+        if self.collection.model:
+            return self.collection.model(**document)
         else:
             return document
 
