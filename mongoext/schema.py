@@ -36,4 +36,4 @@ def process(schema, data, weak=False):
     try:
         return schematec.schema.process(schematec_schema, data, weak=weak)
     except schematec.exc.ValidationError as e:
-        raise exc.SchemaError(e)
+        raise exc.ValidationError(e)
