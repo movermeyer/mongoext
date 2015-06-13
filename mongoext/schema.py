@@ -9,8 +9,6 @@ from . import (
     exc,
 )
 
-Schema = schematec.schema.Dictionary
-
 Descriptor = schematec.abc.Descriptor
 
 
