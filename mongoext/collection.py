@@ -109,7 +109,7 @@ class Collection(object):
     def save(self, document):
         document = dict(document)
 
-        if document['_id']:
+        if '_id' in document:
             self.find_one_and_replace(
                 filter={'_id': document['_id']},
                 replacement=dict(document),
