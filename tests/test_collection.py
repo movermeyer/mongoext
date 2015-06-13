@@ -1,88 +1,90 @@
-# import unittest
-
-# from . import fixture
+from . import fixture
 
 
-# class FindDocumentTestCase(fixture.MongoextTestCase):
-#     def setUp(self):
-#         self.documents = [{
-#             'title': u'Title',
-#             'description': u'Description',
-#             'content': u'Content',
-#             'created_ts': 1,
-#         }, {
-#             'title': u'Title2',
-#             'description': u'Description2',
-#             'content': u'Content2',
-#             'created_ts': 2,
-#         }, {
-#             'title': u'Title3',
-#             'description': u'Description3',
-#             'content': u'Content3',
-#             'created_ts': 3,
-#         }]
+class FindDocumentTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        self.documents = [{
+            'title': u'Title',
+            'description': u'Description',
+            'content': u'Content',
+            'created_ts': 1,
+        }, {
+            'title': u'Title2',
+            'description': u'Description2',
+            'content': u'Content2',
+            'created_ts': 2,
+        }, {
+            'title': u'Title3',
+            'description': u'Description3',
+            'content': u'Content3',
+            'created_ts': 3,
+        }]
 
-#         fixture.Collection().insert(self.documents)
+        fixture.Collection().insert(self.documents)
 
-#     def equal(self, documents1, documents2):
-#         documents1 = [d for d in documents1]
-#         for document in documents1:
-#             document.pop('_id')
-#         self.assertEqual(documents1, documents2)
+    def tearDown(self):
+        fixture.Collection().drop()
 
-#     def test_find_documents(self):
-#         documents = fixture.Collection().find()
-#         self.equal(documents, self.documents)
+    def equal(self, documents1, documents2):
+        documents1 = [d for d in documents1]
+        for document in documents1:
+            document.pop('_id')
+        self.assertEqual(documents1, documents2)
 
-#     def test_find_documents_by_spec(self):
-#         spec = {
-#             'created_ts': 2
-#         }
-#         documents = fixture.Collection().find(spec)
-#         self.equal(documents, [self.documents[1]])
+    def test_find_documents(self):
+        documents = fixture.Collection().find()
+        self.equal(documents, self.documents)
 
-#     def test_find_documents_by_spec_with_empty_result(self):
-#         spec = {
-#             'created_ts': -1
-#         }
-#         documents = fixture.Collection().find(spec)
-#         self.equal(documents, [])
+    def test_find_documents_by_spec(self):
+        spec = {
+            'created_ts': 2
+        }
+        documents = fixture.Collection().find(spec)
+        self.equal(documents, [self.documents[1]])
 
-#     def test_find_documents_by_spec_with_more_the_one_result(self):
-#         spec = {
-#             'created_ts': {'$gt': 1},
-#         }
-#         documents = fixture.Collection().find(spec)
-#         self.equal(documents, self.documents[1:])
+    def test_find_documents_by_spec_with_empty_result(self):
+        spec = {
+            'created_ts': -1
+        }
+        documents = fixture.Collection().find(spec)
+        self.equal(documents, [])
 
-#     def test_find_documents_with_specified_fields(self):
-#         documents = fixture.Collection().find(fields={'created_ts': 1})
-#         self.equal(documents, [{'created_ts': d['created_ts']} for d in self.documents])
+    def test_find_documents_by_spec_with_more_the_one_result(self):
+        spec = {
+            'created_ts': {'$gt': 1},
+        }
+        documents = fixture.Collection().find(spec)
+        self.equal(documents, self.documents[1:])
 
-#     def test_find_documents_with_skip(self):
-#         documents = fixture.Collection().find(skip=1)
-#         self.equal(documents, self.documents[1:])
+    def test_find_documents_with_specified_fields(self):
+        documents = fixture.Collection().find(projection={'created_ts': 1})
+        self.equal(documents, [{'created_ts': d['created_ts']} for d in self.documents])
 
-#     def test_find_documents_by_spec_with_fields_and_skip(self):
-#         spec = {
-#             'created_ts': {'$gt': 1},
-#         }
-#         fields = {'created_ts': 1}
-#         skip = 1
-#         documents = fixture.Collection().find(spec, fields, skip)
-#         self.equal(documents, [{'created_ts': d['created_ts']} for d in self.documents[2:]])
+    def test_find_documents_with_skip(self):
+        documents = fixture.Collection().find(skip=1)
+        self.equal(documents, self.documents[1:])
 
-#     def test_find_one_document(self):
-#         document = fixture.Collection().find_one({'created_ts': 1})
-#         self.equal([document], [self.documents[0]])
+    def test_find_documents_by_spec_with_fields_and_skip(self):
+        spec = {
+            'created_ts': {'$gt': 1},
+        }
+        fields = {'created_ts': 1}
+        skip = 1
+        documents = fixture.Collection().find(spec, fields, skip)
+        self.equal(documents, [{'created_ts': d['created_ts']} for d in self.documents[2:]])
 
-#     def test_find_one_document_for_none_results(self):
-#         document = fixture.Collection().find_one({'created_ts': -1})
-#         self.assertIsNone(document)
+    def test_find_one_document(self):
+        document = fixture.Collection().find_one({'created_ts': 1})
+        print [d for d in fixture.Collection().find({'created_ts': 1})]
+        self.equal([document], [self.documents[0]])
 
-#     def test_find_one_document_for_multiple_results(self):
-#         document = fixture.Collection().find_one()
-#         self.equal([document], [self.documents[0]])
+    def test_find_one_document_for_none_results(self):
+        document = fixture.Collection().find_one({'created_ts': -1})
+        self.assertIsNone(document)
+
+    def test_find_one_document_for_multiple_results(self):
+        document = fixture.Collection().find_one()
+        self.equal([document], [self.documents[0]])
 
 
 # class FindModelsTestCase(fixture.MongoextTestCase):

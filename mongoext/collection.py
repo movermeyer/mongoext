@@ -12,8 +12,7 @@ class Collection(object):
     KEYS_COMPRESSION = None
     NAME = None
 
-    def __init__(self, model):
-        self.model = model
+    def __init__(self):
         self.__pymongo_collection = None
 
         if self.KEYS_COMPRESSION:
@@ -74,12 +73,15 @@ class Collection(object):
         return mongoext.cursor.Cursor(self, pymongo_cursor)
 
     def find_one(self, filter_or_id=None, *args, **kw):
+        if isinstance(filter_or_id, dict):
+            filter_or_id = self.pack_fields(filter_or_id)
+
         document = self.collection.find_one(filter_or_id, *args, **kw)
+        if not document:
+            return
+
         document = self.unpack_fields(document)
-        if self.model:
-            return self.model(**document)
-        else:
-            return document
+        return document
 
     def find_one_and_replace(self, filter, replacement, projection=None):
         pymongo_cursor = self.collection.find_one_and_replace(
@@ -90,14 +92,7 @@ class Collection(object):
         return mongoext.cursor.Cursor(self, pymongo_cursor)
 
     def insert(self, documents):
-        pymongo_documents = []
-        for document in documents:
-            if self.model and isinstance(document, self.model):
-                pymongo_documents.append(dict(document))
-            elif isinstance(document, dict):
-                pymongo_documents.append(document)
-            else:
-                raise TypeError(type(document))
+        pymongo_documents = map(dict, documents)
         pymongo_documents = [self.pack_fields(d) for d in pymongo_documents]
 
         for document in pymongo_documents:
@@ -106,25 +101,21 @@ class Collection(object):
         return self.collection.insert_many(pymongo_documents)
 
     def insert_one(self, document):
-        if self.model and isinstance(document, self.model):
-            document = dict(document)
-        else:
-            raise TypeError(type(document))
+        document = dict(document)
         self.clean(document)
         document = self.pack_fields(document)
         return self.collection.insert_one(document).inserted_id
 
     def save(self, document):
-        if not (self.model and isinstance(document, self.model)):
-            raise TypeError(type(document))
+        document = dict(document)
 
-        if document._id:
+        if document['_id']:
             self.find_one_and_replace(
-                filter={'_id': document._id},
+                filter={'_id': document['_id']},
                 replacement=dict(document),
             )
         else:
-            document._id = self.insert_one(document)
+            document['_id'] = self.insert_one(document)
 
     def count(self):
         return self.collection.count()
