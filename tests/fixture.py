@@ -1,39 +1,37 @@
-# import unittest
+import unittest
 
-# import mongoext.fields
-# import mongoext.collection
-# import mongoext.document
-
-
-# class Collection(mongoext.collection.Collection):
-#     CONNECTION = {'host': 'localhost', 'port': 27017}
-#     DATABASE = 'db'
-#     NAME = 'articles'
-#     KEYS_COMPRESSION = {
-#         'title': 't',
-#         'description': 'd',
-#         'content': 'c',
-#         'created_ts': 'ct',
-#     }
+import mongoext.schema
+import mongoext.collection
+import mongoext.document
 
 
-# class Document(mongoext.document.Document):
-#     objects = Collection()
+class Collection(mongoext.collection.Collection):
+    CONNECTION = {'host': 'localhost', 'port': 27017}
+    DATABASE = 'db'
+    NAME = 'articles'
+    KEYS_COMPRESSION = {
+        'title': 't',
+        'description': 'd',
+        'content': 'c',
+        'created_ts': 'ct',
+    }
 
-#     title = mongoext.fields.String()
-#     description = mongoext.fields.String()
-#     content = mongoext.fields.String()
-#     created_ts = mongoext.fields.Numeric(required=True)
+
+class Document(mongoext.document.Document):
+    title = mongoext.schema.String()
+    description = mongoext.schema.String()
+    content = mongoext.schema.String()
+    created_ts = mongoext.schema.Integer() & mongoext.schema.Required()
 
 
-# class MongoextTestCase(unittest.TestCase):
-#     def setUp(self):
-#         Collection().insert_one({
-#             'title': u'Title',
-#             'description': u'Description',
-#             'content': u'Content',
-#             'created_ts': 1,
-#         })
+class MongoextTestCase(unittest.TestCase):
+    def setUp(self):
+        Collection(Document).insert_one({
+            'title': u'Title',
+            'description': u'Description',
+            'content': u'Content',
+            'created_ts': 1,
+        })
 
-#     def tearDown(self):
-#         Collection().drop()
+    def tearDown(self):
+        Collection(Document).drop()
