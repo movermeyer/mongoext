@@ -4,7 +4,3 @@ class MongoextException(Exception):
 
 class ValidationError(MongoextException):
     pass
-
-
-class SchemaError(MongoextException):
-    pass
