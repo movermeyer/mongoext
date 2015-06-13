@@ -18,7 +18,7 @@ class MetaSchema(type):
         for name, obj in attrs.iteritems():
             if issubclass(type(obj), cls.FIELD):
                 schema[name] = obj
-        attrs['__schema__'] = schema
+        attrs['_schema'] = schema
         for name, descriptor in schema.items():
             if not isinstance(descriptor, mongoext.abc.AbstractField):
                 descriptor = mongoext.abc.AbstractField(descriptor)
@@ -28,23 +28,23 @@ class MetaSchema(type):
 
 class Document(object):
     __metaclass__ = MetaSchema
-    __schema__ = None
+    _schema = None
 
     _id = mongoext.schema.Field()
 
     def __init__(self, **data):
-        data = mongoext.schema.process(self.__schema__, data, weak=True)
+        data = mongoext.schema.process(self._schema, data, weak=True)
         for name, value in data.items():
             setattr(self, name, value)
 
     def __contains__(self, name):
-        return name in self.__schema__
+        return name in self._schema
 
     def __len__(self):
-        return len(self.__schema__)
+        return len(self._schema)
 
     def __iter__(self):
-        for name in self.__schema__:
+        for name in self._schema:
             yield name, getattr(self, name, None)
 
     def __hash__(self):
