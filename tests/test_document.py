@@ -5,6 +5,8 @@ import mongoext.document as document
 import mongoext.schema as schema
 import mongoext.exc as exc
 
+# from . import fixture
+
 
 class Document(document.Document):
     content = schema.String()
@@ -70,34 +72,69 @@ class Collection(collection.Collection):
     NAME = 'collection'
 
 
-def tearDownModule():
-    Collection(Document).drop()
+# def tearDownModule():
+#     Collection(Document).drop()
 
 
-class TestSave(unittest.TestCase):
-    def setUp(self):
-        self.collection = Collection(Document)
+# class TestSave(unittest.TestCase):
+#     def setUp(self):
+#         self.collection = Collection(Document)
 
-    def test_save(self):
-        document = Document()
-        document.client_id = 1
-        document.content = 'content'
-        self.collection.save(document)
-        self.assertIsNotNone(document._id)
+#     def test_save(self):
+#         document = Document()
+#         document.client_id = 1
+#         document.content = 'content'
+#         self.collection.save(document)
+#         self.assertIsNotNone(document._id)
 
-    def test_update(self):
-        document = Document()
-        document.client_id = 1
-        document.content = 'content'
-        self.collection.save(document)
-        document.content = u''
-        self.collection.save(document)
-        document = self.collection.find_one(document._id)
-        self.assertEqual(document.content, u'')
+#     def test_update(self):
+#         document = Document()
+#         document.client_id = 1
+#         document.content = 'content'
+#         self.collection.save(document)
+#         document.content = u''
+#         self.collection.save(document)
+#         document = self.collection.find_one(document._id)
+#         self.assertEqual(document.content, u'')
 
-    def test_scheme_error_save(self):
-        document = Document()
-        document.content = 'content'
-        with self.assertRaises(exc.ValidationError):
-            self.collection.save(document)
+#     def test_scheme_error_save(self):
+#         document = Document()
+#         document.content = 'content'
+#         self.collection.save(document)
+#         assert False, document
+#         with self.assertRaises(exc.ValidationError):
+#             self.collection.save(document)
 
+
+# class ModelTestCase(fixture.MongoextTestCase):
+#     def test_find(self):
+#         fields = {
+#             'created_ts': 1,
+#             'title': 1,
+#         }
+#         cursor = fixture.Collection(fixture.Document).find({'created_ts': {'$gte': 1}}, fields).sort('created_ts')
+#         self.assertTrue(all([lambda: isinstance(c, fixture.Document) for c in cursor]))
+
+#     def test_save(self):
+#         cursor = fixture.Document.objects.find({'created_ts': {'$gte': 1}}).sort('created_ts')
+#         model = [c for c in cursor][0]
+#         model.save()
+
+#     def test_fail_save(self):
+#         fields = {
+#             'created_ts': 1,
+#             'title': 1,
+#         }
+#         cursor = fixture.Document.objects.find({'created_ts': {'$gte': 1}}, fields).sort('created_ts')
+#         model = [c for c in cursor][0]
+#         model.created_ts = None
+#         with self.assertRaises(ValueError):
+#             model.save()
+
+#     def test_fail_insert(self):
+#         with self.assertRaises(TypeError):
+#             fixture.Document.objects.insert_one(True)
+
+#     def test_repr(self):
+#         model = fixture.Document.objects.find_one()
+#         self.assertTrue(isinstance(repr(model), basestring))
