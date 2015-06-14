@@ -114,6 +114,9 @@ class Collection(object):
     def save(self, origin):
         document = dict(origin)
 
+        if self.model and isinstance(origin, self.model):
+            mongoext.schema.process(origin._schema, document)
+
         if '_id' in document:
             self.find_one_and_replace(
                 filter={'_id': document['_id']},

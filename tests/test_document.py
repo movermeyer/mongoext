@@ -91,13 +91,11 @@ class TestSave(unittest.TestCase):
         document = self.collection.find_one(document._id)
         self.assertEqual(document.content, u'')
 
-#     def test_scheme_error_save(self):
-#         document = Document()
-#         document.content = 'content'
-#         self.collection.save(document)
-#         assert False, document
-#         with self.assertRaises(exc.ValidationError):
-#             self.collection.save(document)
+    def test_scheme_error_save(self):
+        document = Document()
+        document.content = 'content'
+        with self.assertRaises(exc.ValidationError):
+            self.collection.save(document)
 
 
 # class ModelTestCase(fixture.MongoextTestCase):
