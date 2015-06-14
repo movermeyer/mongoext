@@ -103,7 +103,7 @@ class Collection(object):
         for document in pymongo_documents:
             self.clean(document)
 
-        return self.collection.insert_many(pymongo_documents)
+        return self.collection.insert_many(pymongo_documents).inserted_ids
 
     def insert_one(self, document):
         document = dict(document)

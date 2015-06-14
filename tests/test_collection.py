@@ -272,49 +272,49 @@ class FindModelsTestCase(fixture.MongoextTestCase):
             'created_ts': 3,
         })]
 
-        document_ids = fixture.Document.objects.insert(self.models)
+        document_ids = fixture.Collection(fixture.Document).insert(self.models)
         for document_id, model in zip(document_ids, self.models):
             model._id = document_id
 
     def equal(self, documents1, documents2):
-        self.assertEqual([d.to_dict() for d in documents1], [d.to_dict() for d in documents2])
+        self.assertEqual([dict(d) for d in documents1], [dict(d) for d in documents2])
 
-#     def test_find_models(self):
-#         models = fixture.Document.objects.find()
-#         self.equal(models, self.models)
+    def test_find_models(self):
+        models = fixture.Collection(fixture.Document).find()
+        self.equal(models, self.models)
 
-#     def test_find_models_by_spec(self):
-#         spec = {
-#             'created_ts': 2
-#         }
-#         models = fixture.Document.objects.find(spec)
-#         self.equal(models, [self.models[1]])
+    def test_find_models_by_spec(self):
+        spec = {
+            'created_ts': 2
+        }
+        models = fixture.Collection(fixture.Document).find(spec)
+        self.equal(models, [self.models[1]])
 
-#     def test_find_models_by_spec_with_empty_result(self):
-#         spec = {
-#             'created_ts': -1
-#         }
-#         models = fixture.Document.objects.find(spec)
-#         self.equal(models, [])
+    def test_find_models_by_spec_with_empty_result(self):
+        spec = {
+            'created_ts': -1
+        }
+        models = fixture.Collection(fixture.Document).find(spec)
+        self.equal(models, [])
 
-#     def test_find_models_by_spec_with_more_the_one_result(self):
-#         spec = {
-#             'created_ts': {'$gt': 1},
-#         }
-#         models = fixture.Document.objects.find(spec)
-#         self.equal(models, self.models[1:])
+    def test_find_models_by_spec_with_more_the_one_result(self):
+        spec = {
+            'created_ts': {'$gt': 1},
+        }
+        models = fixture.Collection(fixture.Document).find(spec)
+        self.equal(models, self.models[1:])
 
-#     def test_find_documents_with_skip(self):
-#         models = fixture.Document.objects.find(skip=1)
-#         self.equal(models, self.models[1:])
+    def test_find_documents_with_skip(self):
+        models = fixture.Collection(fixture.Document).find(skip=1)
+        self.equal(models, self.models[1:])
 
-#     def test_find_documents_by_spec_with_fields_and_skip(self):
-#         spec = {
-#             'created_ts': {'$gt': 1},
-#         }
-#         skip = 1
-#         models = fixture.Document.objects.find(spec, skip=skip)
-#         self.equal(models, self.models[2:])
+    def test_find_documents_by_spec_with_fields_and_skip(self):
+        spec = {
+            'created_ts': {'$gt': 1},
+        }
+        skip = 1
+        models = fixture.Collection(fixture.Document).find(spec, skip=skip)
+        self.equal(models, self.models[2:])
 
 
 # class SaveModelTestCase(fixture.MongoextTestCase):
