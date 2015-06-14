@@ -72,20 +72,16 @@ class Collection(collection.Collection):
     NAME = 'collection'
 
 
-# def tearDownModule():
-#     Collection(Document).drop()
+class TestSave(unittest.TestCase):
+    def setUp(self):
+        self.collection = Collection(Document)
 
-
-# class TestSave(unittest.TestCase):
-#     def setUp(self):
-#         self.collection = Collection(Document)
-
-#     def test_save(self):
-#         document = Document()
-#         document.client_id = 1
-#         document.content = 'content'
-#         self.collection.save(document)
-#         self.assertIsNotNone(document._id)
+    def test_save(self):
+        document = Document()
+        document.client_id = 1
+        document.content = 'content'
+        self.collection.save(document)
+        self.assertIsNotNone(document._id)
 
 #     def test_update(self):
 #         document = Document()
