@@ -317,23 +317,23 @@ class FindModelsTestCase(fixture.MongoextTestCase):
         self.equal(models, self.models[2:])
 
 
-# class SaveModelTestCase(fixture.MongoextTestCase):
-#     def setUp(self):
-#         pass
+class SaveModelTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        pass
 
-#     def test_save_new_model(self):
-#         model = fixture.Document(**{
-#             'created_ts': 1,
-#         })
-#         fixture.Collection().save(model)
-#         self.assertEqual(fixture.Collection().count(), 1)
+    def test_save_new_model(self):
+        model = fixture.Document(**{
+            'created_ts': 1,
+        })
+        fixture.Collection(fixture.Document).save(model)
+        self.assertEqual(fixture.Collection().count(), 1)
 
-#     def test_save_existed_model(self):
-#         model = fixture.Document(**{
-#             'created_ts': 1,
-#         })
-#         _id = fixture.Collection().save(model)
-#         model._id = _id
-#         model.created_ts = 2
-#         fixture.Collection().save(model)
-#         self.assertEqual(fixture.Collection().count(), 1)
+    def test_save_existed_model(self):
+        model = fixture.Document(**{
+            'created_ts': 1,
+        })
+        _id = fixture.Collection(fixture.Document).save(model)
+        model._id = _id
+        model.created_ts = 2
+        fixture.Collection(fixture.Document).save(model)
+        self.assertEqual(fixture.Collection(fixture.Document).count(), 1)

@@ -117,17 +117,19 @@ class Collection(object):
         if self.model and isinstance(origin, self.model):
             mongoext.schema.process(origin._schema, document)
 
-        if '_id' in document:
+        if document.get('_id'):
             self.find_one_and_replace(
                 filter={'_id': document['_id']},
                 replacement=dict(document),
             )
+            _id = document['_id']
         else:
             _id = self.insert_one(document)
             if self.model and isinstance(origin, self.model):
                 origin._id = _id
             else:
                 origin['_id'] = _id
+        return _id
 
     def count(self):
         return self.collection.count()
