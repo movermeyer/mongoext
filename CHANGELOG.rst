@@ -3,15 +3,11 @@
 Changelog
 ---------
 
-0.3.1
+0.4.0 (2015-06-14)
 ++++++++++++++++++
 
-- Remove Document to Collection link
-- Rename Unicode field to String
-- Extract AbstractField
-- Extract separate mongoext.field module
-- Rename Field.cast to Field.process
-- Rename Scheme.validate to Scheme.process
+- Integrated schematec
+- Huge internals refactoring of Document model
 
 0.3.0 (2015-04-27)
 ++++++++++++++++++
