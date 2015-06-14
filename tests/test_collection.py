@@ -253,31 +253,31 @@ class Compression(unittest.TestCase):
         self.assertIsNotNone(NoCompressionCollection.database)
 
 
-# class FindModelsTestCase(fixture.MongoextTestCase):
-#     def setUp(self):
-#         self.models = [fixture.Document(**{
-#             'title': u'Title',
-#             'description': u'Description',
-#             'content': u'Content',
-#             'created_ts': 1,
-#         }), fixture.Document(**{
-#             'title': u'Title2',
-#             'description': u'Description2',
-#             'content': u'Content2',
-#             'created_ts': 2,
-#         }), fixture.Document(**{
-#             'title': u'Title3',
-#             'description': u'Description3',
-#             'content': u'Content3',
-#             'created_ts': 3,
-#         })]
+class FindModelsTestCase(fixture.MongoextTestCase):
+    def setUp(self):
+        self.models = [fixture.Document(**{
+            'title': u'Title',
+            'description': u'Description',
+            'content': u'Content',
+            'created_ts': 1,
+        }), fixture.Document(**{
+            'title': u'Title2',
+            'description': u'Description2',
+            'content': u'Content2',
+            'created_ts': 2,
+        }), fixture.Document(**{
+            'title': u'Title3',
+            'description': u'Description3',
+            'content': u'Content3',
+            'created_ts': 3,
+        })]
 
-#         document_ids = fixture.Document.objects.insert(self.models)
-#         for document_id, model in zip(document_ids, self.models):
-#             model._id = document_id
+        document_ids = fixture.Document.objects.insert(self.models)
+        for document_id, model in zip(document_ids, self.models):
+            model._id = document_id
 
-#     def equal(self, documents1, documents2):
-#         self.assertEqual([d.to_dict() for d in documents1], [d.to_dict() for d in documents2])
+    def equal(self, documents1, documents2):
+        self.assertEqual([d.to_dict() for d in documents1], [d.to_dict() for d in documents2])
 
 #     def test_find_models(self):
 #         models = fixture.Document.objects.find()
