@@ -46,7 +46,7 @@ class Document(object):
     def __iter__(self):
         for name in self._schema:
             value = getattr(self, name, None)
-            if value:
+            if value is not None:
                 yield name, getattr(self, name, None)
 
     def __hash__(self):
