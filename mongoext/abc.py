@@ -13,6 +13,10 @@ class AbstractField(object):
         return self.data.get(instance)
 
     def __set__(self, instance, value):
+        if value is None:
+            del self.data[instance]
+            return
+
         try:
             self.data[instance] = self.descriptors(value)
         except schematec.exc.SchematecError:
