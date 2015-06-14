@@ -49,14 +49,12 @@ class TestToDict(unittest.TestCase):
             'content': 'content',
         }
         document = Document(**data)
-        self.assertEqual(dict(document), dict(data, _id=None))
+        self.assertEqual(dict(document), data)
 
     def test_partial_document(self):
         document = Document(client_id=1)
         self.assertEqual(dict(document), {
-            '_id': None,
             'client_id': 1,
-            'content': None,
         })
 
 
@@ -83,15 +81,15 @@ class TestSave(unittest.TestCase):
         self.collection.save(document)
         self.assertIsNotNone(document._id)
 
-#     def test_update(self):
-#         document = Document()
-#         document.client_id = 1
-#         document.content = 'content'
-#         self.collection.save(document)
-#         document.content = u''
-#         self.collection.save(document)
-#         document = self.collection.find_one(document._id)
-#         self.assertEqual(document.content, u'')
+    def test_update(self):
+        document = Document()
+        document.client_id = 1
+        document.content = 'content'
+        self.collection.save(document)
+        document.content = u''
+        self.collection.save(document)
+        document = self.collection.find_one(document._id)
+        self.assertEqual(document.content, u'')
 
 #     def test_scheme_error_save(self):
 #         document = Document()
