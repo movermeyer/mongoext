@@ -111,8 +111,8 @@ class Collection(object):
         document = self.pack_fields(document)
         return self.collection.insert_one(document).inserted_id
 
-    def save(self, document):
-        document = dict(document)
+    def save(self, origin):
+        document = dict(origin)
 
         if '_id' in document:
             self.find_one_and_replace(
@@ -120,7 +120,11 @@ class Collection(object):
                 replacement=dict(document),
             )
         else:
-            document['_id'] = self.insert_one(document)
+            _id = self.insert_one(document)
+            if self.model and isinstance(origin, self.model):
+                origin._id = _id
+            else:
+                origin['_id'] = _id
 
     def count(self):
         return self.collection.count()
