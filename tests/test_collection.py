@@ -253,7 +253,6 @@ class Compression(unittest.TestCase):
         self.assertIsNotNone(NoCompressionCollection.database)
 
 
-
 # class FindModelsTestCase(fixture.MongoextTestCase):
 #     def setUp(self):
 #         self.models = [fixture.Document(**{

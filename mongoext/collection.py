@@ -12,7 +12,9 @@ class Collection(object):
     KEYS_COMPRESSION = None
     NAME = None
 
-    def __init__(self):
+    def __init__(self, model=None):
+        self.model = model
+
         self.__pymongo_collection = None
 
         if self.KEYS_COMPRESSION:
@@ -81,7 +83,10 @@ class Collection(object):
             return
 
         document = self.unpack_fields(document)
-        return document
+        if self.model:
+            return self.model(**document)
+        else:
+            return document
 
     def find_one_and_replace(self, filter, replacement, projection=None):
         pymongo_cursor = self.collection.find_one_and_replace(
@@ -136,5 +141,9 @@ class Collection(object):
 
     def update(self, spec, document, multi=False):
         spec = self.pack_fields(spec)
+
+        document = dict(document)
         document = self.pack_fields(document)
+        self.clean(document)
+
         self.collection.update(spec, document, multi=multi)
