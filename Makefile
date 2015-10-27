@@ -1,7 +1,8 @@
 .PHONY: test clean publish docker
 
 test:
-	tox
+	flake8
+	nosetests --with-coverage --cover-package=mongoext
 
 clean:
 	rm -rf build dist mongoext.egg-info
