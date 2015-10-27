@@ -1,4 +1,4 @@
-.PHONY: test mongo clean publish
+.PHONY: test mongo clean publish docker
 
 test:
 	flake8
@@ -12,3 +12,6 @@ clean:
 
 publish: test
 	python setup.py sdist bdist_wheel upload
+
+docker:
+	@echo "Run: export DOCKER_HOST=\"tcp://`vagrant ssh-config | sed -n "s/[ ]*HostName[ ]*//gp"`:2375\""
