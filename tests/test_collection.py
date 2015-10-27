@@ -74,7 +74,7 @@ class FindDocumentTestCase(fixture.MongoextTestCase):
 
     def test_find_one_document(self):
         document = fixture.Collection().find_one({'created_ts': 1})
-        print [d for d in fixture.Collection().find({'created_ts': 1})]
+        # print [d for d in fixture.Collection().find({'created_ts': 1})]
         self.equal([document], [self.documents[0]])
 
     def test_find_one_document_for_none_results(self):

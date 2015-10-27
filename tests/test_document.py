@@ -129,4 +129,4 @@ class ModelTestCase(fixture.MongoextTestCase):
 
     def test_repr(self):
         model = fixture.Collection(fixture.Document).find_one()
-        self.assertTrue(isinstance(repr(model), basestring))
+        self.assertTrue(isinstance(repr(model), str))

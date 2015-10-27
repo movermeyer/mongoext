@@ -20,7 +20,7 @@ setup(
     package_data={'': ['LICENSE']},
     install_requires=['pymongo==3.0'],
     version=version,
-    description='Data models for Mongo',
+    description='MongoDB ORM',
     author='Andrey Gubarev',
     author_email='mylokin@me.com',
     url='https://github.com/mylokin/mongoext',
