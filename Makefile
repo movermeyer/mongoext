@@ -1,7 +1,7 @@
 .PHONY: test clean publish docker
 
 test:
-	tox
+	MONGO=$(value MONGO) tox
 
 clean:
 	rm .coverage
