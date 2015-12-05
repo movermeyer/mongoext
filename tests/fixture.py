@@ -24,7 +24,7 @@ class Document(mongoext.document.Document):
     title = mongoext.schema.String()
     description = mongoext.schema.String()
     content = mongoext.schema.String()
-    created_ts = mongoext.schema.Integer() & mongoext.schema.Required()
+    created_ts = mongoext.schema.Integer()
 
 
 class MongoextTestCase(unittest.TestCase):

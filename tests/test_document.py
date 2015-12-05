@@ -13,7 +13,7 @@ from . import (
 
 class Document(document.Document):
     content = schema.String()
-    client_id = schema.Integer() & schema.Required()
+    client_id = schema.Integer()
 
 
 class TestInitialization(unittest.TestCase):
