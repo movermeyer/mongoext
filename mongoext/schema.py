@@ -1,39 +1,84 @@
-import schematec.abc
-import schematec.converters
-import schematec.exc
-import schematec.schema
-import schematec.validators
-
-from . import (
-    abc,
-    exc,
-)
-
-Descriptor = schematec.abc.Descriptor
+__all__ = ['Descriptor', 'Integer', 'Number', 'String']
+from . import exc
 
 
-class Field(schematec.abc.AbstractDescriptor):
+class Descriptor(object):
     def __call__(self, value):
         return value
 
 
-Integer = schematec.converters.Integer
+class Integer(Descriptor):
+    def __call__(self, value):
+        if value is None:
+            raise exc.ValidationError(value)
 
-Number = schematec.converters.Number
+        if isinstance(value, bool):
+            return int(value)
 
-String = schematec.converters.String
+        if isinstance(value, (int, long)):
+            return int(value)
 
-Required = schematec.validators.Required
+        if isinstance(value, basestring):
+            try:
+                return int(value)
+            except ValueError:
+                raise exc.ValidationError(value)
+
+        raise exc.ValidationError(value)
 
 
-def process(schema, data, weak=False):
-    schematec_schema = {}
-    for field, descriptor in schema.items():
-        if isinstance(descriptor, abc.AbstractField):
-            descriptor = descriptor.descriptors
-        schematec_schema[field] = descriptor
+class Number(Descriptor):
+    def __call__(self, value):
+        if value is None:
+            raise exc.ValidationError(value)
 
-    try:
-        return schematec.schema.process(schematec_schema, data, weak=weak)
-    except schematec.exc.ValidationError as e:
-        raise exc.ValidationError(e)
+        if isinstance(value, bool):
+            return float(value)
+
+        if isinstance(value, (float, int, long)):
+            return float(value)
+
+        if isinstance(value, basestring):
+            try:
+                return float(value)
+            except ValueError:
+                raise exc.ValidationError(value)
+
+        raise exc.ValidationError(value)
+
+
+class String(Descriptor):
+    def __call__(self, value):
+        if value is None:
+            raise exc.ValidationError(value)
+
+        if isinstance(value, unicode):
+            return value
+
+        if isinstance(value, bool):
+            raise exc.ValidationError(value)
+
+        if isinstance(value, (int, long)):
+            return unicode(value)
+
+        if isinstance(value, str):
+            try:
+                return unicode(value)
+            except UnicodeDecodeError:
+                raise exc.ValidationError(value)
+
+        raise exc.ValidationError(value)
+
+
+class Boolean(Descriptor):
+    def __call__(self, value):
+        if value is None:
+            raise exc.ValidationError(value)
+
+        if isinstance(value, bool):
+            return value
+
+        if isinstance(value, (int, long)) and value in (0, 1):
+            return bool(value)
+
+        raise exc.ValidationError(value)
