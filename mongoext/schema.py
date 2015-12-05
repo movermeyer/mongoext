@@ -1,13 +1,13 @@
-__all__ = ['Descriptor', 'Integer', 'Number', 'String']
+__all__ = ['Field', 'Integer', 'Number', 'String', 'Boolean']
 from . import exc
 
 
-class Descriptor(object):
+class Field(object):
     def __call__(self, value):
         return value
 
 
-class Integer(Descriptor):
+class Integer(Field):
     def __call__(self, value):
         if value is None:
             raise exc.ValidationError(value)
@@ -27,7 +27,7 @@ class Integer(Descriptor):
         raise exc.ValidationError(value)
 
 
-class Number(Descriptor):
+class Number(Field):
     def __call__(self, value):
         if value is None:
             raise exc.ValidationError(value)
@@ -47,7 +47,7 @@ class Number(Descriptor):
         raise exc.ValidationError(value)
 
 
-class String(Descriptor):
+class String(Field):
     def __call__(self, value):
         if value is None:
             raise exc.ValidationError(value)
@@ -70,7 +70,7 @@ class String(Descriptor):
         raise exc.ValidationError(value)
 
 
-class Boolean(Descriptor):
+class Boolean(Field):
     def __call__(self, value):
         if value is None:
             raise exc.ValidationError(value)

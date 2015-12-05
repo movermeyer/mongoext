@@ -1,12 +1,9 @@
 import weakref
 
-import schematec.exc
-import mongoext.exc
-
 
 class AbstractField(object):
-    def __init__(self, descriptors):
-        self.descriptors = descriptors
+    def __init__(self, fields):
+        self.fields = fields
         self.data = weakref.WeakKeyDictionary()
 
     def __get__(self, instance, owner):
@@ -17,10 +14,7 @@ class AbstractField(object):
             del self.data[instance]
             return
 
-        try:
-            self.data[instance] = self.descriptors(value)
-        except schematec.exc.SchematecError:
-            raise mongoext.exc.ValidationError(value)
+        self.data[instance] = self.fields(value)
 
     def __delete__(self, instance):
         del self.data[instance]

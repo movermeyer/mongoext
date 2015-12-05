@@ -7,7 +7,7 @@ import mongoext.exc
 
 
 class MetaSchema(type):
-    FIELD = (mongoext.abc.AbstractField, mongoext.schema.Descriptor)
+    FIELD = (mongoext.abc.AbstractField, mongoext.schema.Field)
 
     def __new__(cls, class_name, bases, attrs):
         schema = {}
@@ -19,10 +19,10 @@ class MetaSchema(type):
             if issubclass(type(obj), cls.FIELD):
                 schema[name] = obj
         attrs['_schema'] = schema
-        for name, descriptor in schema.items():
-            if not isinstance(descriptor, mongoext.abc.AbstractField):
-                descriptor = mongoext.abc.AbstractField(descriptor)
-            attrs[name] = descriptor
+        for name, field in schema.items():
+            if not isinstance(field, mongoext.abc.AbstractField):
+                field = mongoext.abc.AbstractField(field)
+            attrs[name] = field
         return super(MetaSchema, cls).__new__(cls, class_name, bases, attrs)
 
 
