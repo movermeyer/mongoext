@@ -5,6 +5,7 @@ test:
 	nosetests --with-coverage --cover-package=mongoext
 
 clean:
+	rm .coverage
 	rm -rf build dist mongoext.egg-info
 
 publish: test
