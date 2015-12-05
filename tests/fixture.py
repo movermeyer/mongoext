@@ -1,12 +1,15 @@
+
 import unittest
 
 import mongoext.schema
 import mongoext.collection
 import mongoext.document
 
+from . import utils
+
 
 class Collection(mongoext.collection.Collection):
-    CONNECTION = {'host': 'localhost', 'port': 27017}
+    CONNECTION = utils.get_connection()
     DATABASE = 'db'
     NAME = 'articles'
     KEYS_COMPRESSION = {

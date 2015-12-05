@@ -5,7 +5,10 @@ import mongoext.document as document
 import mongoext.schema as schema
 import mongoext.exc as exc
 
-from . import fixture
+from . import (
+    fixture,
+    utils,
+)
 
 
 class Document(document.Document):
@@ -64,7 +67,7 @@ class TestRepr(unittest.TestCase):
 
 
 class Collection(collection.Collection):
-    CONNECTION = {'host': 'localhost', 'port': 27017}
+    CONNECTION = utils.get_connection()
 
     DATABASE = 'db'
     NAME = 'collection'
