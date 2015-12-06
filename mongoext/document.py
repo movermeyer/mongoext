@@ -2,24 +2,24 @@ from __future__ import absolute_import
 
 import mongoext.abc
 import mongoext.collection
-import mongoext.schema
+import mongoext.scheme
 import mongoext.exc
 
 
 class MetaSchema(type):
-    FIELD = (mongoext.abc.AbstractField, mongoext.schema.Field)
+    FIELD = (mongoext.abc.AbstractField, mongoext.scheme.Field)
 
     def __new__(cls, class_name, bases, attrs):
-        schema = {}
+        scheme = {}
         for base in bases:
             for name, obj in vars(base).iteritems():
                 if issubclass(type(obj), cls.FIELD):
-                    schema[name] = obj
+                    scheme[name] = obj
         for name, obj in attrs.iteritems():
             if issubclass(type(obj), cls.FIELD):
-                schema[name] = obj
-        attrs['_schema'] = schema
-        for name, field in schema.items():
+                scheme[name] = obj
+        attrs['_scheme'] = scheme
+        for name, field in scheme.items():
             if not isinstance(field, mongoext.abc.AbstractField):
                 field = mongoext.abc.AbstractField(field)
             attrs[name] = field
@@ -28,24 +28,24 @@ class MetaSchema(type):
 
 class Document(object):
     __metaclass__ = MetaSchema
-    _schema = None
+    _scheme = None
 
-    _id = mongoext.schema.Field()
+    _id = mongoext.scheme.Field()
 
     def __init__(self, **data):
         for field_name, value in data.items():
-            if field_name not in self._schema:
+            if field_name not in self._scheme:
                 continue
-            setattr(self, field_name, self._schema[field_name](value))
+            setattr(self, field_name, self._scheme[field_name](value))
 
     def __contains__(self, name):
-        return name in self._schema
+        return name in self._scheme
 
     def __len__(self):
-        return len(self._schema)
+        return len(self._scheme)
 
     def __iter__(self):
-        for name in self._schema:
+        for name in self._scheme:
             value = getattr(self, name, None)
             if value is not None:
                 yield name, getattr(self, name, None)

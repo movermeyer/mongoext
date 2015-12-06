@@ -82,3 +82,7 @@ class Boolean(Field):
             return bool(value)
 
         raise exc.ValidationError(value)
+
+
+def process(scheme, document):
+    return {k: scheme[k](v) for k, v in document.items() if k in scheme}

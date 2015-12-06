@@ -2,7 +2,7 @@ import unittest
 
 import mongoext.collection as collection
 import mongoext.document as document
-import mongoext.schema as schema
+import mongoext.scheme as scheme
 import mongoext.exc as exc
 
 from . import (
@@ -12,8 +12,8 @@ from . import (
 
 
 class Document(document.Document):
-    content = schema.String()
-    client_id = schema.Integer()
+    content = scheme.String()
+    client_id = scheme.Integer()
 
 
 class TestInitialization(unittest.TestCase):

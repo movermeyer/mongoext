@@ -1,7 +1,7 @@
 
 import unittest
 
-import mongoext.schema
+import mongoext.scheme
 import mongoext.collection
 import mongoext.document
 
@@ -21,10 +21,10 @@ class Collection(mongoext.collection.Collection):
 
 
 class Document(mongoext.document.Document):
-    title = mongoext.schema.String()
-    description = mongoext.schema.String()
-    content = mongoext.schema.String()
-    created_ts = mongoext.schema.Integer()
+    title = mongoext.scheme.String()
+    description = mongoext.scheme.String()
+    content = mongoext.scheme.String()
+    created_ts = mongoext.scheme.Integer()
 
 
 class MongoextTestCase(unittest.TestCase):
