@@ -33,9 +33,10 @@ class Document(object):
     _id = mongoext.schema.Field()
 
     def __init__(self, **data):
-        data = mongoext.schema.process(self._schema, data, weak=True)
-        for name, value in data.items():
-            setattr(self, name, value)
+        for field_name, value in data.items():
+            if field_name not in self._schema:
+                continue
+            setattr(self, field_name, self._schema[field_name](value))
 
     def __contains__(self, name):
         return name in self._schema
