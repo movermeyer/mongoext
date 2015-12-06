@@ -13,7 +13,7 @@ class Collection(object):
     KEYS_COMPRESSION = None
     NAME = None
 
-    def __init__(self, model):
+    def __init__(self, model=None):
         self.model = model
 
         self.__pymongo_collection = None
