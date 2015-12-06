@@ -3,13 +3,16 @@ from . import exc
 
 
 class Field(object):
+    def __init__(self, required=False):
+        self.required = required
+
     def __call__(self, value):
         return value
 
 
 class Integer(Field):
     def __call__(self, value):
-        if value is None:
+        if value is None and self.required:
             raise exc.ValidationError(value)
 
         if isinstance(value, bool):
@@ -29,7 +32,7 @@ class Integer(Field):
 
 class Number(Field):
     def __call__(self, value):
-        if value is None:
+        if value is None and self.required:
             raise exc.ValidationError(value)
 
         if isinstance(value, bool):
@@ -49,7 +52,7 @@ class Number(Field):
 
 class String(Field):
     def __call__(self, value):
-        if value is None:
+        if value is None and self.required:
             raise exc.ValidationError(value)
 
         if isinstance(value, unicode):
@@ -72,7 +75,7 @@ class String(Field):
 
 class Boolean(Field):
     def __call__(self, value):
-        if value is None:
+        if value is None and self.required:
             raise exc.ValidationError(value)
 
         if isinstance(value, bool):
