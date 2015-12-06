@@ -115,7 +115,7 @@ class Collection(object):
     def save(self, origin):
         document = dict(origin)
 
-        if self.model and isinstance(origin, self.model):
+        if self.model:
             mongoext.scheme.process(origin._scheme, document)
 
         if document.get('_id'):

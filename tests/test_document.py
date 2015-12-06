@@ -48,8 +48,9 @@ class TestSetAttribute(unittest.TestCase):
 class TestToDict(unittest.TestCase):
     def test_full_document(self):
         data = {
+            '_id': None,
             'client_id': 1,
-            'content': 'content',
+            'content': u'content',
         }
         document = Document(**data)
         self.assertEqual(dict(document), data)
@@ -57,7 +58,9 @@ class TestToDict(unittest.TestCase):
     def test_partial_document(self):
         document = Document(client_id=1)
         self.assertEqual(dict(document), {
+            '_id': None,
             'client_id': 1,
+            'content': None,
         })
 
 
