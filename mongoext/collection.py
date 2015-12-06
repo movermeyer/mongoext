@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import pymongo
 
 import mongoext.cursor
+import mongoext.scheme
 
 
 class Collection(object):
@@ -115,7 +116,7 @@ class Collection(object):
         document = dict(origin)
 
         if self.model and isinstance(origin, self.model):
-            mongoext.schema.process(origin._schema, document)
+            mongoext.scheme.process(origin._scheme, document)
 
         if document.get('_id'):
             self.find_one_and_replace(
