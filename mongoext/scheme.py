@@ -7,13 +7,21 @@ class Field(object):
         self.required = required
 
     def __call__(self, value):
+        if value is None:
+            if self.required:
+                raise exc.ValidationError(value)
+            else:
+                return value
         return value
 
 
 class Integer(Field):
     def __call__(self, value):
-        if value is None and self.required:
-            raise exc.ValidationError(value)
+        if value is None:
+            if self.required:
+                raise exc.ValidationError(value)
+            else:
+                return value
 
         if isinstance(value, bool):
             return int(value)
@@ -32,8 +40,11 @@ class Integer(Field):
 
 class Number(Field):
     def __call__(self, value):
-        if value is None and self.required:
-            raise exc.ValidationError(value)
+        if value is None:
+            if self.required:
+                raise exc.ValidationError(value)
+            else:
+                return value
 
         if isinstance(value, bool):
             return float(value)
@@ -52,8 +63,11 @@ class Number(Field):
 
 class String(Field):
     def __call__(self, value):
-        if value is None and self.required:
-            raise exc.ValidationError(value)
+        if value is None:
+            if self.required:
+                raise exc.ValidationError(value)
+            else:
+                return value
 
         if isinstance(value, unicode):
             return value
@@ -75,8 +89,11 @@ class String(Field):
 
 class Boolean(Field):
     def __call__(self, value):
-        if value is None and self.required:
-            raise exc.ValidationError(value)
+        if value is None:
+            if self.required:
+                raise exc.ValidationError(value)
+            else:
+                return value
 
         if isinstance(value, bool):
             return value

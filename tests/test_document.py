@@ -13,7 +13,7 @@ from . import (
 
 class Document(document.Document):
     content = scheme.String()
-    client_id = scheme.Integer()
+    client_id = scheme.Integer(required=True)
 
 
 class TestInitialization(unittest.TestCase):

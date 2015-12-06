@@ -126,7 +126,7 @@ class Collection(object):
             _id = document['_id']
         else:
             _id = self.insert_one(document)
-            if self.model and isinstance(origin, self.model):
+            if self.model:
                 origin._id = _id
             else:
                 origin['_id'] = _id
