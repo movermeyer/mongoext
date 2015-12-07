@@ -14,6 +14,7 @@ class FieldDescriptor(object):
 
     def __get__(self, instance, owner):
         # every field is nullable so return None, lose empty state
+        # follow common class instance behavior
         return self.data.get(instance)
 
     def __set__(self, instance, value):
