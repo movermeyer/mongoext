@@ -20,6 +20,10 @@ class InheritedDocument(Document):
     author_id = scheme.Integer()
 
 
+class ChangedDocument(Document):
+    client_id = scheme.Integer()
+
+
 class TestInitialization(unittest.TestCase):
     def test_full_success(self):
         Document(client_id=1, content='content')
@@ -77,6 +81,10 @@ class TestToDict(unittest.TestCase):
         }
         self.assertEqual(dict(document), expected)
 
+    def test_changed_inherited_document(self):
+        document = ChangedDocument(content='')
+        self.assertEqual(document.content, '')
+
 
 class TestRepr(unittest.TestCase):
     def test_repr(self):
@@ -86,8 +94,18 @@ class TestRepr(unittest.TestCase):
 class TestDictBehavior(unittest.TestCase):
     def test_getitem(self):
         document = InheritedDocument(client_id=1)
-        expected = 1
-        self.assertEqual(document['client_id'], expected)
+        self.assertEqual(document['client_id'], 1)
+
+    def test_setitem(self):
+        document = Document(client_id=1)
+        document['author_id'] = 2
+        self.assertEqual(document['author_id'], 2)
+
+    def test_delitem(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertIsNotNone(document['author_id'])
+        del document['author_id']
+        self.assertIsNone(document['author_id'])
 
 
 class Collection(collection.Collection):
