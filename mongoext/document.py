@@ -7,7 +7,7 @@ import mongoext.scheme
 import mongoext.exc
 
 
-class AbstractField(object):
+class FieldDescriptor(object):
     def __init__(self, field):
         self.field = field
         self.data = weakref.WeakKeyDictionary()
@@ -32,7 +32,7 @@ class AbstractField(object):
 
 
 class MetaDocument(type):
-    DISCOVER = (AbstractField, mongoext.scheme.Field)
+    DISCOVER = (FieldDescriptor, mongoext.scheme.Field)
 
     def __new__(cls, class_name, bases, attrs):
         scheme = {}
@@ -45,10 +45,10 @@ class MetaDocument(type):
             if issubclass(type(obj), cls.DISCOVER):
                 scheme[name] = obj
         attrs['_scheme'] = scheme
-        # make all the fields abstract
+        # wrap all the fields into data descriptor
         for name, obj in scheme.items():
-            if not isinstance(obj, AbstractField):
-                obj = AbstractField(obj)
+            if not isinstance(obj, FieldDescriptor):
+                obj = FieldDescriptor(obj)
             attrs[name] = obj
         return super(MetaDocument, cls).__new__(cls, class_name, bases, attrs)
 
