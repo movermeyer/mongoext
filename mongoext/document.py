@@ -34,6 +34,7 @@ class MetaDocument(type):
 
     def __new__(cls, class_name, bases, attrs):
         scheme = {}
+        # Collect document scheme
         for base in bases:
             for name, obj in vars(base).iteritems():
                 if issubclass(type(obj), cls.DISCOVER):
@@ -42,6 +43,7 @@ class MetaDocument(type):
             if issubclass(type(obj), cls.DISCOVER):
                 scheme[name] = obj
         attrs['_scheme'] = scheme
+        # Make all the fields abstract
         for name, obj in scheme.items():
             if not isinstance(obj, AbstractField):
                 obj = AbstractField(obj)
