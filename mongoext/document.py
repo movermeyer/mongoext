@@ -29,7 +29,7 @@ class AbstractField(object):
         return self.field(value)
 
 
-class MetaSchema(type):
+class MetaDocument(type):
     FIELD = (AbstractField, mongoext.scheme.Field)
 
     def __new__(cls, class_name, bases, attrs):
@@ -46,11 +46,11 @@ class MetaSchema(type):
             if not isinstance(field, AbstractField):
                 field = AbstractField(field)
             attrs[name] = field
-        return super(MetaSchema, cls).__new__(cls, class_name, bases, attrs)
+        return super(MetaDocument, cls).__new__(cls, class_name, bases, attrs)
 
 
 class Document(object):
-    __metaclass__ = MetaSchema
+    __metaclass__ = MetaDocument
     _scheme = None
 
     _id = mongoext.scheme.Field()
