@@ -30,22 +30,22 @@ class AbstractField(object):
 
 
 class MetaDocument(type):
-    FIELD = (AbstractField, mongoext.scheme.Field)
+    DISCOVER = (AbstractField, mongoext.scheme.Field)
 
     def __new__(cls, class_name, bases, attrs):
         scheme = {}
         for base in bases:
             for name, obj in vars(base).iteritems():
-                if issubclass(type(obj), cls.FIELD):
+                if issubclass(type(obj), cls.DISCOVER):
                     scheme[name] = obj
         for name, obj in attrs.iteritems():
-            if issubclass(type(obj), cls.FIELD):
+            if issubclass(type(obj), cls.DISCOVER):
                 scheme[name] = obj
         attrs['_scheme'] = scheme
-        for name, field in scheme.items():
-            if not isinstance(field, AbstractField):
-                field = AbstractField(field)
-            attrs[name] = field
+        for name, obj in scheme.items():
+            if not isinstance(obj, AbstractField):
+                obj = AbstractField(obj)
+            attrs[name] = obj
         return super(MetaDocument, cls).__new__(cls, class_name, bases, attrs)
 
 
