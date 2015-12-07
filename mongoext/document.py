@@ -2,9 +2,7 @@ from __future__ import absolute_import
 
 import weakref
 
-import mongoext.collection
-import mongoext.scheme
-import mongoext.exc
+from . import scheme
 
 
 class FieldDescriptor(object):
@@ -33,21 +31,21 @@ class FieldDescriptor(object):
 
 
 class MetaDocument(type):
-    DISCOVER = (FieldDescriptor, mongoext.scheme.Field)
+    DISCOVER = (FieldDescriptor, scheme.Field)
 
     def __new__(cls, class_name, bases, attrs):
-        scheme = {}
+        document_scheme = {}
         # collect document scheme
         for base in bases:
             for name, obj in vars(base).iteritems():
                 if issubclass(type(obj), cls.DISCOVER):
-                    scheme[name] = obj
+                    document_scheme[name] = obj
         for name, obj in attrs.iteritems():
             if issubclass(type(obj), cls.DISCOVER):
-                scheme[name] = obj
-        attrs['_scheme'] = scheme
+                document_scheme[name] = obj
+        attrs['_scheme'] = document_scheme
         # wrap all the fields into data descriptor
-        for name, obj in scheme.items():
+        for name, obj in document_scheme.items():
             if not isinstance(obj, FieldDescriptor):
                 obj = FieldDescriptor(obj)
             attrs[name] = obj
@@ -58,10 +56,10 @@ class Document(object):
     __metaclass__ = MetaDocument
     _scheme = None
 
-    _id = mongoext.scheme.Field()
+    _id = scheme.Field()
 
     def __init__(self, **data):
-        data = mongoext.scheme.process(self._scheme, data)
+        data = scheme.process(self._scheme, data)
         for field, value in data.items():
             setattr(self, field, value)
 
