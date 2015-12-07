@@ -83,6 +83,13 @@ class TestRepr(unittest.TestCase):
         self.assertEqual(repr(Document()), '<Document: None>')
 
 
+class TestDictBehavior(unittest.TestCase):
+    def test_getitem(self):
+        document = InheritedDocument(client_id=1)
+        expected = 1
+        self.assertEqual(document['client_id'], expected)
+
+
 class Collection(collection.Collection):
     CONNECTION = utils.get_connection()
 
