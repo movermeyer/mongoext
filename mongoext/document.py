@@ -78,3 +78,12 @@ class Document(object):
 
     def __repr__(self):
         return '<{}: {}>'.format(type(self).__name__, self._id)
+
+    def __getitem__(self, name):
+        return getattr(self, name)
+
+    def __setitem__(self, name, value):
+        return setattr(self, name, value)
+
+    def __delitem__(self, name):
+        return delattr(self, name)

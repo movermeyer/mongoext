@@ -16,6 +16,10 @@ class Document(document.Document):
     client_id = scheme.Integer(required=True)
 
 
+class InheritedDocument(Document):
+    author_id = scheme.Integer()
+
+
 class TestInitialization(unittest.TestCase):
     def test_full_success(self):
         Document(client_id=1, content='content')
@@ -62,6 +66,16 @@ class TestToDict(unittest.TestCase):
             'client_id': 1,
             'content': None,
         })
+
+    def test_inherited_document(self):
+        document = InheritedDocument(client_id=1, author_id=1)
+        expected = {
+            '_id': None,
+            'client_id': 1,
+            'content': None,
+            'author_id': 1,
+        }
+        self.assertEqual(dict(document), expected)
 
 
 class TestRepr(unittest.TestCase):
