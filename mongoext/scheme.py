@@ -11,7 +11,7 @@ class Field(object):
             if self.required:
                 raise exc.ValidationError(value)
             else:
-                return value
+                return
         return value
 
 
@@ -21,7 +21,7 @@ class Integer(Field):
             if self.required:
                 raise exc.ValidationError(value)
             else:
-                return value
+                return
 
         if isinstance(value, bool):
             return int(value)
@@ -44,7 +44,7 @@ class Number(Field):
             if self.required:
                 raise exc.ValidationError(value)
             else:
-                return value
+                return
 
         if isinstance(value, bool):
             return float(value)
@@ -67,7 +67,7 @@ class String(Field):
             if self.required:
                 raise exc.ValidationError(value)
             else:
-                return value
+                return
 
         if isinstance(value, unicode):
             return value
@@ -93,7 +93,7 @@ class Boolean(Field):
             if self.required:
                 raise exc.ValidationError(value)
             else:
-                return value
+                return
 
         if isinstance(value, bool):
             return value
