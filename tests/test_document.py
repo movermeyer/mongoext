@@ -125,6 +125,38 @@ class TestDictBehavior(unittest.TestCase):
         document = InheritedDocument(client_id=1, author_id=2)
         self.assertEqual(set(document.items()), {('client_id', 1), ('author_id', 2)})
 
+    def test_pop(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertEqual(document.pop('client_id'), 1)
+
+    def test_pop_default(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertEqual(document.pop('client_ids', 3), 3)
+
+    def test_pop_fail(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        with self.assertRaises(KeyError):
+            document.pop('client_ids')
+
+    def test_popitem(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertTrue(document.popitem() in {('client_id', 1), ('author_id', 2)})
+
+    def test_popitem_fail(self):
+        document = InheritedDocument()
+        with self.assertRaises(KeyError):
+            document.popitem()
+
+    def test_clear(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        document.clear()
+        self.assertEqual(document, InheritedDocument())
+
+    def test_setdefault(self):
+        document = InheritedDocument(client_id=1)
+        document.setdefault('author_id')
+        self.assertIsNone(document['author_id'])
+
 
 class TestObjectBehavior(unittest.TestCase):
     def test_getitem(self):

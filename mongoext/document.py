@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import collections
 import weakref
 
 from . import scheme
@@ -154,3 +155,62 @@ class Document(object):
 
     def __ne__(self, other):
         return not (self == other)
+
+    __marker = object()
+
+    def pop(self, key, default=__marker):
+        try:
+            value = self[key]
+        except KeyError:
+            if default is self.__marker:
+                raise
+            return default
+        else:
+            del self[key]
+            return value
+
+    def popitem(self):
+        try:
+            key = next(iter(self))
+        except StopIteration:
+            raise KeyError
+        value = self[key]
+        del self[key]
+        return key, value
+
+    def clear(self):
+        try:
+            while True:
+                self.popitem()
+        except KeyError:
+            pass
+
+    def update(*args, **kwds):
+        if not args:
+            raise TypeError('descriptor \'update\' of \'MutableMapping\' object '
+                            'needs an argument')
+        self = args[0]
+        args = args[1:]
+        if len(args) > 1:
+            msg = 'update expected at most 1 arguments, got {}'.format(len(args))
+            raise TypeError(msg)
+        if args:
+            other = args[0]
+            if isinstance(other, collections.Mapping):
+                for key in other:
+                    self[key] = other[key]
+            elif hasattr(other, 'keys'):
+                for key in other.keys():
+                    self[key] = other[key]
+            else:
+                for key, value in other:
+                    self[key] = value
+        for key, value in kwds.items():
+            self[key] = value
+
+    def setdefault(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            self[key] = default
+        return default
