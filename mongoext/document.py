@@ -11,8 +11,6 @@ class FieldDescriptor(object):
         self.data = weakref.WeakKeyDictionary()
 
     def __get__(self, instance, owner):
-        # every field is nullable so return None, lose empty state
-        # follow common class instance behavior
         return self.data[instance]
 
     def __set__(self, instance, value):
