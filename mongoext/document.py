@@ -94,7 +94,7 @@ class Document(object):
             yield name, getattr(self, name)
 
     def __contains__(self, name):
-        return name in self._scheme
+        return name in self._scheme and self in self._scheme[name]
 
     def __len__(self):
         return len(self._scheme)
@@ -103,7 +103,10 @@ class Document(object):
         return id(self)
 
     def __repr__(self):
-        return '<{}: {}>'.format(type(self).__name__, self._id)
+        if '_id' in self:
+            return '<{}: {}>'.format(type(self).__name__, self._id)
+        else:
+            return '<{}: None>'.format(type(self).__name__)
 
     def __getitem__(self, name):
         return getattr(self, name)
