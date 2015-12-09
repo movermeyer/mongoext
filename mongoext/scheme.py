@@ -106,3 +106,7 @@ class Boolean(Field):
 
 def process(scheme, document):
     return {k: scheme[k](v) for k, v in document.items() if k in scheme}
+
+
+def verify(scheme, document):
+    return {k: scheme[k](document.get(k)) for k in scheme}

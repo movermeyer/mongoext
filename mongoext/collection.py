@@ -116,7 +116,7 @@ class Collection(object):
         document = dict(origin)
 
         if self.model:
-            mongoext.scheme.process(origin._scheme, document)
+            mongoext.scheme.verify(origin._scheme, origin)
 
         if document.get('_id'):
             self.find_one_and_replace(
