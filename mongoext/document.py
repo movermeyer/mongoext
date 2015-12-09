@@ -28,7 +28,12 @@ class FieldDescriptor(object):
         return self.field(value)
 
     def __contains__(self, instance):
-        return instance in self.data
+        try:
+            self.data[instance]
+        except KeyError:
+            return False
+        else:
+            return True
 
 
 class MetaDocument(type):
@@ -89,10 +94,15 @@ class Document(object):
 
     def __iter__(self):
         for name in (n for n in self._scheme if self in self._scheme[n]):
-            yield name, getattr(self, name)
+            yield name
 
     def __contains__(self, name):
-        return name in self._scheme and self in self._scheme[name]
+        try:
+            self._scheme[name][self]
+        except KeyError:
+            return False
+        else:
+            return True
 
     def __len__(self):
         return len(iter(self))
@@ -122,19 +132,19 @@ class Document(object):
         return self[key] if key in self else default
 
     def iterkeys(self):
-        return (k for k, v in self)
+        return (k for k in self)
 
     def keys(self):
         return list(self.iterkeys())
 
     def itervalues(self):
-        return (v for k, v in self)
+        return (self[k] for k in self)
 
     def values(self):
         return list(self.itervalues())
 
     def iteritems(self):
-        return ((k, v) for k, v in self)
+        return ((k, self[k]) for k in self)
 
     def items(self):
         return list(self.iteritems())
