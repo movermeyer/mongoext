@@ -109,10 +109,16 @@ class Document(object):
             return '<{}: None>'.format(type(self).__name__)
 
     def __getitem__(self, name):
-        return getattr(self, name)
+        try:
+            return getattr(self, name)
+        except AttributeError:
+            raise KeyError(name)
 
     def __setitem__(self, name, value):
         return setattr(self, name, value)
 
     def __delitem__(self, name):
         return delattr(self, name)
+
+    def get(self, key, default=None):
+        return self[key] if key in self else default

@@ -101,7 +101,26 @@ class TestDictBehavior(unittest.TestCase):
         document = InheritedDocument(client_id=1, author_id=2)
         self.assertIsNotNone(document['author_id'])
         del document['author_id']
-        self.assertIsNone(document['author_id'])
+        with self.assertRaises(KeyError):
+            self.assertIsNone(document['author_id'])
+
+
+class TestObjectBehavior(unittest.TestCase):
+    def test_getitem(self):
+        document = InheritedDocument(client_id=1)
+        self.assertEqual(document.client_id, 1)
+
+    def test_setitem(self):
+        document = Document(client_id=1)
+        document.author_id = 2
+        self.assertEqual(document.author_id, 2)
+
+    def test_delitem(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertIsNotNone(document.author_id)
+        del document.author_id
+        with self.assertRaises(AttributeError):
+            self.assertIsNone(document.author_id)
 
 
 class Collection(collection.Collection):
