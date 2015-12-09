@@ -113,6 +113,14 @@ class TestDictBehavior(unittest.TestCase):
         document = InheritedDocument(client_id=1, author_id=2)
         self.assertEqual(dict(document), {'client_id': 1, 'author_id': 2})
 
+    def test_keys(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertEqual(set(document.keys()), {'client_id', 'author_id'})
+
+    def test_values(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertEqual(set(document.values()), {1, 2})
+
 
 class TestObjectBehavior(unittest.TestCase):
     def test_getitem(self):

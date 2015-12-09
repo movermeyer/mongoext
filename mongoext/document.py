@@ -97,7 +97,7 @@ class Document(object):
         return name in self._scheme and self in self._scheme[name]
 
     def __len__(self):
-        return len(self._scheme)
+        return len(iter(self))
 
     def __hash__(self):
         return id(self)
@@ -122,3 +122,15 @@ class Document(object):
 
     def get(self, key, default=None):
         return self[key] if key in self else default
+
+    def iterkeys(self):
+        return (k for k, v in self)
+
+    def keys(self):
+        return list(self.iterkeys())
+
+    def itervalues(self):
+        return (v for k, v in self)
+
+    def values(self):
+        return list(self.itervalues())
