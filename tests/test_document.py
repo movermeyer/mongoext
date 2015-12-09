@@ -66,17 +66,13 @@ class TestToDict(unittest.TestCase):
     def test_partial_document(self):
         document = Document(client_id=1)
         self.assertEqual(dict(document), {
-            '_id': None,
             'client_id': 1,
-            'content': None,
         })
 
     def test_inherited_document(self):
         document = InheritedDocument(client_id=1, author_id=1)
         expected = {
-            '_id': None,
             'client_id': 1,
-            'content': None,
             'author_id': 1,
         }
         self.assertEqual(dict(document), expected)

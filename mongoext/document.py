@@ -13,7 +13,7 @@ class FieldDescriptor(object):
     def __get__(self, instance, owner):
         # every field is nullable so return None, lose empty state
         # follow common class instance behavior
-        return self.data.get(instance)
+        return self.data[instance]
 
     def __set__(self, instance, value):
         # unset value
@@ -29,6 +29,9 @@ class FieldDescriptor(object):
     def __call__(self, value):
         return self.field(value)
 
+    def __contains__(self, instance):
+        return instance in self.data
+
 
 class MetaDocument(type):
     DISCOVER = (FieldDescriptor, scheme.Field)
@@ -43,12 +46,14 @@ class MetaDocument(type):
         for name, obj in attrs.iteritems():
             if issubclass(type(obj), cls.DISCOVER):
                 document_scheme[name] = obj
-        attrs['_scheme'] = document_scheme
+
         # wrap all the fields into data descriptor
         for name, obj in document_scheme.items():
             if not isinstance(obj, FieldDescriptor):
                 obj = FieldDescriptor(obj)
-            attrs[name] = obj
+            document_scheme[name] = obj
+
+        attrs['_scheme'] = document_scheme
         return super(MetaDocument, cls).__new__(cls, class_name, bases, attrs)
 
 
@@ -63,15 +68,36 @@ class Document(object):
         for field, value in data.items():
             setattr(self, field, value)
 
+    def __getattribute__(self, name):
+        scheme = super(Document, self).__getattribute__('_scheme')
+        if name in scheme:
+            if self in scheme[name]:
+                return scheme[name].__get__(self, type(self))
+            else:
+                raise AttributeError(name)
+        return super(Document, self).__getattribute__(name)
+
+    def __setattr__(self, name, value):
+        scheme = super(Document, self).__getattribute__('_scheme')
+        if name in scheme:
+            return scheme[name].__set__(self, value)
+        return super(Document, self).__setattr__(name, value)
+
+    def __delattr__(self, name):
+        scheme = super(Document, self).__getattribute__('_scheme')
+        if name in scheme:
+            return scheme[name].__delete__(self)
+        return super(Document, self).__delattr__(name)
+
+    def __iter__(self):
+        for name in (n for n in self._scheme if self in self._scheme[n]):
+            yield name, getattr(self, name)
+
     def __contains__(self, name):
         return name in self._scheme
 
     def __len__(self):
         return len(self._scheme)
-
-    def __iter__(self):
-        for name in self._scheme:
-            yield name, getattr(self, name)
 
     def __hash__(self):
         return id(self)
