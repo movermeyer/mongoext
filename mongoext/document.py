@@ -98,7 +98,7 @@ class Document(object):
 
     def __contains__(self, name):
         try:
-            self._scheme[name][self]
+            self._scheme[name].__get__(self, type(self))
         except KeyError:
             return False
         else:

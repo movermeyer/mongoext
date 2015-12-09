@@ -123,7 +123,7 @@ class TestDictBehavior(unittest.TestCase):
 
     def test_items(self):
         document = InheritedDocument(client_id=1, author_id=2)
-        self.assertEqual(set(document.items()), {['client_id', 1], ['author_id', 2]})
+        self.assertEqual(set(document.items()), {('client_id', 1), ('author_id', 2)})
 
 
 class TestObjectBehavior(unittest.TestCase):
