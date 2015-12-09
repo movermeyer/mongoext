@@ -104,6 +104,15 @@ class TestDictBehavior(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.assertIsNone(document['author_id'])
 
+    def test_get(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertIsNotNone(document.get('author_id'))
+        self.assertIsNone(document.get('author_ids'))
+
+    def test_iteration(self):
+        document = InheritedDocument(client_id=1, author_id=2)
+        self.assertEqual(dict(document), {'client_id': 1, 'author_id': 2})
+
 
 class TestObjectBehavior(unittest.TestCase):
     def test_getitem(self):
