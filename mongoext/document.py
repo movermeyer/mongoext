@@ -134,3 +134,9 @@ class Document(object):
 
     def values(self):
         return list(self.itervalues())
+
+    def iteritems(self):
+        return ((k, v) for k, v in self)
+
+    def items(self):
+        return list(self.iteritems())
