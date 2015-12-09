@@ -132,7 +132,7 @@ class Document(object):
         return self[key] if key in self else default
 
     def iterkeys(self):
-        return (k for k in self)
+        return iter(self)
 
     def keys(self):
         return list(self.iterkeys())
