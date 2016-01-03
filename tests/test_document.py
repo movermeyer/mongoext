@@ -56,7 +56,6 @@ class TestSetAttribute(unittest.TestCase):
 class TestToDict(unittest.TestCase):
     def test_full_document(self):
         data = {
-            '_id': None,
             'client_id': 1,
             'content': u'content',
         }
