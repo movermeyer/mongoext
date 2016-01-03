@@ -1,4 +1,4 @@
-Redisext
+Mongoext
 ========
 
 .. image:: https://pypip.in/wheel/mongoext/badge.svg
