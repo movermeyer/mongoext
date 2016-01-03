@@ -64,7 +64,6 @@ class MetaDocument(type):
 
 
 class BaseDocument(object):
-    __metaclass__ = MetaDocument
     _scheme = None
 
     _id = scheme.Field()
