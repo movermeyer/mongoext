@@ -22,6 +22,8 @@ class Cursor(object):
         else:
             return document
 
+    __next__ = next
+
     def sort(self, key):
         key = self.collection.pack_field(key)
         self.__pymongo_cursor = self.__pymongo_cursor.sort(key)
