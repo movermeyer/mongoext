@@ -14,11 +14,14 @@ with open('mongoext/__init__.py', 'r') as fd:
             version = m.group(1)
             break
 
+REQUIREMENTS = ['pymongo==3.0', 'six==1.10.0']
+
 setup(
     name='mongoext',
     packages=['mongoext'],
     package_data={'': ['LICENSE']},
-    install_requires=['pymongo==3.0'],
+    install_requires=REQUIREMENTS,
+    tests_require=REQUIREMENTS,
     version=version,
     description='MongoDB ORM',
     author='Andrey Gubarev',
@@ -34,7 +37,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Topic :: Database',
         'Topic :: Database :: Database Engines/Servers',

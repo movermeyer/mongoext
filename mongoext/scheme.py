@@ -1,4 +1,5 @@
 __all__ = ['Field', 'Integer', 'Number', 'String', 'Boolean']
+import six
 from . import exc
 
 
@@ -26,10 +27,10 @@ class Integer(Field):
         if isinstance(value, bool):
             return int(value)
 
-        if isinstance(value, (int, long)):
+        if isinstance(value, six.integer_types):
             return int(value)
 
-        if isinstance(value, basestring):
+        if isinstance(value, six.string_types):
             try:
                 return int(value)
             except ValueError:
@@ -49,10 +50,10 @@ class Number(Field):
         if isinstance(value, bool):
             return float(value)
 
-        if isinstance(value, (float, int, long)):
+        if isinstance(value, [float] + six.integer_types):
             return float(value)
 
-        if isinstance(value, basestring):
+        if isinstance(value, six.string_types):
             try:
                 return float(value)
             except ValueError:
@@ -69,18 +70,18 @@ class String(Field):
             else:
                 return
 
-        if isinstance(value, unicode):
+        if isinstance(value, six.string_types):
             return value
 
         if isinstance(value, bool):
             raise exc.ValidationError(value)
 
-        if isinstance(value, (int, long)):
-            return unicode(value)
+        if isinstance(value, six.integer_types):
+            return six.u(value)
 
-        if isinstance(value, str):
+        if isinstance(value, six.binary_type):
             try:
-                return unicode(value)
+                return six.u(value)
             except UnicodeDecodeError:
                 raise exc.ValidationError(value)
 
@@ -98,7 +99,7 @@ class Boolean(Field):
         if isinstance(value, bool):
             return value
 
-        if isinstance(value, (int, long)) and value in (0, 1):
+        if isinstance(value, six.integer_types) and value in (0, 1):
             return bool(value)
 
         raise exc.ValidationError(value)
