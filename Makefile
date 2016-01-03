@@ -4,6 +4,7 @@ test:
 	MONGO=$(value MONGO) tox
 
 clean:
+	rm -rf .tox
 	rm .coverage
 	rm -rf build dist mongoext.egg-info
 
