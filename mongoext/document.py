@@ -3,6 +3,8 @@ from __future__ import absolute_import
 import collections
 import weakref
 
+import six
+
 from . import scheme
 
 
@@ -44,10 +46,10 @@ class MetaDocument(type):
         document_scheme = {}
         # collect document scheme
         for base in bases:
-            for name, obj in vars(base).iteritems():
+            for name, obj in vars(base).items():
                 if issubclass(type(obj), cls.DISCOVER):
                     document_scheme[name] = obj
-        for name, obj in attrs.iteritems():
+        for name, obj in attrs.items():
             if issubclass(type(obj), cls.DISCOVER):
                 document_scheme[name] = obj
 
@@ -61,7 +63,7 @@ class MetaDocument(type):
         return super(MetaDocument, cls).__new__(cls, class_name, bases, attrs)
 
 
-class Document(object):
+class BaseDocument(object):
     __metaclass__ = MetaDocument
     _scheme = None
 
@@ -73,25 +75,25 @@ class Document(object):
             setattr(self, field, value)
 
     def __getattribute__(self, name):
-        scheme = super(Document, self).__getattribute__('_scheme')
+        scheme = super(BaseDocument, self).__getattribute__('_scheme')
         if name in scheme:
             if self in scheme[name]:
                 return scheme[name].__get__(self, type(self))
             else:
                 raise AttributeError(name)
-        return super(Document, self).__getattribute__(name)
+        return super(BaseDocument, self).__getattribute__(name)
 
     def __setattr__(self, name, value):
-        scheme = super(Document, self).__getattribute__('_scheme')
+        scheme = super(BaseDocument, self).__getattribute__('_scheme')
         if name in scheme:
             return scheme[name].__set__(self, value)
-        return super(Document, self).__setattr__(name, value)
+        return super(BaseDocument, self).__setattr__(name, value)
 
     def __delattr__(self, name):
-        scheme = super(Document, self).__getattribute__('_scheme')
+        scheme = super(BaseDocument, self).__getattribute__('_scheme')
         if name in scheme:
             return scheme[name].__delete__(self)
-        return super(Document, self).__delattr__(name)
+        return super(BaseDocument, self).__delattr__(name)
 
     def __iter__(self):
         for name in (n for n in self._scheme if self in self._scheme[n]):
@@ -132,23 +134,14 @@ class Document(object):
     def get(self, key, default=None):
         return self[key] if key in self else default
 
-    def iterkeys(self):
-        return iter(self)
-
     def keys(self):
-        return list(self.iterkeys())
-
-    def itervalues(self):
-        return (self[k] for k in self)
+        return list(self)
 
     def values(self):
-        return list(self.itervalues())
-
-    def iteritems(self):
-        return ((k, self[k]) for k in self)
+        return list(self[k] for k in self)
 
     def items(self):
-        return list(self.iteritems())
+        return list((k, self[k]) for k in self)
 
     def __eq__(self, other):
         return self is other or dict(self.items()) == dict(other.items())
@@ -214,3 +207,7 @@ class Document(object):
         except KeyError:
             self[key] = default
         return default
+
+
+class Document(six.with_metaclass(MetaDocument, BaseDocument)):
+    pass

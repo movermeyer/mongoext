@@ -20,7 +20,7 @@ class Collection(object):
 
         if self.KEYS_COMPRESSION:
             self.keys_compression = dict(self.KEYS_COMPRESSION, _id='_id')
-            self.keys_uncompression = {v: k for k, v in self.keys_compression.iteritems()}
+            self.keys_uncompression = {v: k for k, v in self.keys_compression.items()}
         else:
             self.keys_compression = self.keys_uncompression = None
 
@@ -47,7 +47,7 @@ class Collection(object):
         if not self.keys_compression:
             return document
         compressed_document = {}
-        for key, value in document.iteritems():
+        for key, value in document.items():
             if not key.startswith('$'):
                 key = self.keys_compression[key]
             if isinstance(value, dict):
@@ -59,7 +59,7 @@ class Collection(object):
         if not self.keys_uncompression:
             return document
         uncompressed_document = {}
-        for key, value in document.iteritems():
+        for key, value in document.items():
             if not key.startswith('$'):
                 key = self.keys_uncompression[key]
             if isinstance(value, dict):
