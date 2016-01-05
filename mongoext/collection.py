@@ -2,8 +2,10 @@ from __future__ import absolute_import
 
 import pymongo
 
-import mongoext.cursor
-import mongoext.scheme
+from . import (
+    cursor,
+    scheme,
+)
 
 
 class Collection(object):
@@ -73,7 +75,7 @@ class Collection(object):
             projection=projection and self.pack_fields(projection),
             skip=skip,
         )
-        return mongoext.cursor.Cursor(self, pymongo_cursor)
+        return cursor.Cursor(self, pymongo_cursor)
 
     def find_one(self, filter_or_id=None, *args, **kw):
         if isinstance(filter_or_id, dict):
@@ -95,7 +97,7 @@ class Collection(object):
             replacement=replacement and self.pack_fields(replacement),
             projection=projection and self.pack_fields(projection),
         )
-        return mongoext.cursor.Cursor(self, pymongo_cursor)
+        return cursor.Cursor(self, pymongo_cursor)
 
     def insert(self, documents):
         pymongo_documents = map(dict, documents)
@@ -116,7 +118,7 @@ class Collection(object):
         document = dict(origin)
 
         if self.model:
-            mongoext.scheme.verify(origin._scheme, origin)
+            scheme.verify(origin._scheme, origin)
 
         if document.get('_id'):
             self.find_one_and_replace(
