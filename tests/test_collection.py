@@ -229,7 +229,7 @@ class SaveDocumentTestCase(fixture.MongoextTestCase):
 
 
 class NoCompressionCollection(fixture.Collection):
-    KEYS_COMPRESSION = None
+    FIELDS_MAPPING = None
 
 
 class Compression(unittest.TestCase):
@@ -241,12 +241,12 @@ class Compression(unittest.TestCase):
 
     def test_pack(self):
         spec = {'field': 1}
-        compressed = NoCompressionCollection().pack_fields(spec)
+        compressed = NoCompressionCollection().pack_document(spec)
         self.assertEqual(spec, compressed)
 
     def test_unpack(self):
         compressed = {'f': 1}
-        spec = NoCompressionCollection().unpack_fields(compressed)
+        spec = NoCompressionCollection().unpack_document(compressed)
         self.assertEqual(spec, compressed)
 
     def test_database(self):

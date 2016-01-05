@@ -12,7 +12,7 @@ class Collection(mongoext.collection.Collection):
     CONNECTION = utils.get_connection()
     DATABASE = 'db'
     NAME = 'articles'
-    KEYS_COMPRESSION = {
+    FIELDS_MAPPING = {
         'title': 't',
         'description': 'd',
         'content': 'c',

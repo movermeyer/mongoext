@@ -8,7 +8,7 @@ class Cursor(object):
 
     def __iter__(self):
         for document in self.__pymongo_cursor:
-            document = self.collection.unpack_fields(document)
+            document = self.collection.unpack_document(document)
             if self.collection.model:
                 yield self.collection.model(**document)
             else:
@@ -16,7 +16,7 @@ class Cursor(object):
 
     def next(self):
         document = next(self.__pymongo_cursor)
-        document = self.collection.unpack_fields(document)
+        document = self.collection.unpack_document(document)
         if self.collection.model:
             return self.collection.model(**document)
         else:

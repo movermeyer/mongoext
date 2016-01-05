@@ -8,23 +8,62 @@ from . import (
 )
 
 
-class Collection(object):
+class FieldCompressionMixin(object):
+    FIELDS_MAPPING = None
+
+    @classmethod
+    def _mapping(cls):
+        if not getattr(cls, '__mapping', None):
+            cls.__mapping = dict(cls.FIELDS_MAPPING or {}, _id='_id')
+        return cls.__mapping
+
+    @classmethod
+    def pack_field(cls, field):
+        return cls._mapping().get(field, field)
+
+    @classmethod
+    def pack_document(cls, document):
+        packed_document = {}
+        for field, value in document.items():
+            if not field.startswith('$'):
+                field = cls.pack_field(field)
+            if isinstance(value, dict):
+                value = cls.pack_document(value)
+            packed_document[field] = value
+        return packed_document
+
+    @classmethod
+    def _reverse_mapping(cls):
+        if not getattr(cls, '__reverse_mapping', None):
+            cls.__reverse_mapping = {v: k for k, v in cls._mapping().items()}
+        return cls.__reverse_mapping
+
+    @classmethod
+    def unpack_field(cls, field):
+        return cls._reverse_mapping().get(field, field)
+
+    @classmethod
+    def unpack_document(cls, document):
+        unpacked_document = {}
+        for field, value in document.items():
+            if not field.startswith('$'):
+                field = cls.unpack_field(field)
+            if isinstance(value, dict):
+                value = cls.unpack_document(value)
+            unpacked_document[field] = value
+        return unpacked_document
+
+
+class Collection(FieldCompressionMixin):
     CONNECTION = None
     DATABASE = None
 
-    KEYS_COMPRESSION = None
     NAME = None
 
     def __init__(self, model=None):
         self.model = model
 
         self.__pymongo_collection = None
-
-        if self.KEYS_COMPRESSION:
-            self.keys_compression = dict(self.KEYS_COMPRESSION, _id='_id')
-            self.keys_uncompression = {v: k for k, v in self.keys_compression.items()}
-        else:
-            self.keys_compression = self.keys_uncompression = None
 
     @property
     def collection(self):
@@ -40,52 +79,23 @@ class Collection(object):
         for field in (f for f, v in document.items() if v is None):
             del document[field]
 
-    def pack_field(self, key):
-        if not self.keys_compression:
-            return key
-        return self.keys_compression.get(key, key)
-
-    def pack_fields(self, document):
-        if not self.keys_compression:
-            return document
-        compressed_document = {}
-        for key, value in document.items():
-            if not key.startswith('$'):
-                key = self.keys_compression[key]
-            if isinstance(value, dict):
-                value = self.pack_fields(value)
-            compressed_document[key] = value
-        return compressed_document
-
-    def unpack_fields(self, document):
-        if not self.keys_uncompression:
-            return document
-        uncompressed_document = {}
-        for key, value in document.items():
-            if not key.startswith('$'):
-                key = self.keys_uncompression[key]
-            if isinstance(value, dict):
-                value = self.unpack_fields(value)
-            uncompressed_document[key] = value
-        return uncompressed_document
-
     def find(self, filter=None, projection=None, skip=0):
         pymongo_cursor = self.collection.find(
-            filter=filter and self.pack_fields(filter),
-            projection=projection and self.pack_fields(projection),
+            filter=filter and self.pack_document(filter),
+            projection=projection and self.pack_document(projection),
             skip=skip,
         )
         return cursor.Cursor(self, pymongo_cursor)
 
     def find_one(self, filter_or_id=None, *args, **kw):
         if isinstance(filter_or_id, dict):
-            filter_or_id = self.pack_fields(filter_or_id)
+            filter_or_id = self.pack_document(filter_or_id)
 
         document = self.collection.find_one(filter_or_id, *args, **kw)
         if not document:
             return
 
-        document = self.unpack_fields(document)
+        document = self.unpack_document(document)
         if self.model:
             return self.model(**document)
         else:
@@ -93,15 +103,15 @@ class Collection(object):
 
     def find_one_and_replace(self, filter, replacement, projection=None):
         pymongo_cursor = self.collection.find_one_and_replace(
-            filter=filter and self.pack_fields(filter),
-            replacement=replacement and self.pack_fields(replacement),
-            projection=projection and self.pack_fields(projection),
+            filter=filter and self.pack_document(filter),
+            replacement=replacement and self.pack_document(replacement),
+            projection=projection and self.pack_document(projection),
         )
         return cursor.Cursor(self, pymongo_cursor)
 
     def insert(self, documents):
         pymongo_documents = map(dict, documents)
-        pymongo_documents = [self.pack_fields(d) for d in pymongo_documents]
+        pymongo_documents = [self.pack_document(d) for d in pymongo_documents]
 
         for document in pymongo_documents:
             self.clean(document)
@@ -111,7 +121,7 @@ class Collection(object):
     def insert_one(self, document):
         document = dict(document)
         self.clean(document)
-        document = self.pack_fields(document)
+        document = self.pack_document(document)
         return self.collection.insert_one(document).inserted_id
 
     def save(self, origin):
@@ -148,14 +158,14 @@ class Collection(object):
         if spec is None:
             return self.collection.remove(multi=multi)
 
-        spec = self.pack_fields(spec)
+        spec = self.pack_document(spec)
         return self.collection.remove(spec, multi=multi)
 
     def update(self, spec, document, multi=False):
-        spec = self.pack_fields(spec)
+        spec = self.pack_document(spec)
 
         document = dict(document)
-        document = self.pack_fields(document)
+        document = self.pack_document(document)
         self.clean(document)
 
         self.collection.update(spec, document, multi=multi)
