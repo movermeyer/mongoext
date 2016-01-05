@@ -240,11 +240,21 @@ class Compression(unittest.TestCase):
         NoCompressionCollection().drop()
 
     def test_pack(self):
+        document = fixture.Collection.pack_document({'title': 1})
+        expected = {'t': 1}
+        self.assertEqual(document, expected)
+
+    def test_unpack(self):
+        document = fixture.Collection.unpack_document({'t': 1})
+        expected = {'title': 1}
+        self.assertEqual(document, expected)
+
+    def test_no_compression_pack(self):
         spec = {'field': 1}
         compressed = NoCompressionCollection().pack_document(spec)
         self.assertEqual(spec, compressed)
 
-    def test_unpack(self):
+    def test_no_compression_unpack(self):
         compressed = {'f': 1}
         spec = NoCompressionCollection().unpack_document(compressed)
         self.assertEqual(spec, compressed)
