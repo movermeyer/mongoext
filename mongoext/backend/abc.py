@@ -34,6 +34,11 @@ class FieldMapper(object):
 
 
 class AbstractClient(object):
+    def __init__(self, connection, database, collection):
+        self.connection = connection
+        self.database = database
+        self.collection = collection
+
     @classmethod
     def connect(cls, *seeds):
         raise NotImplementedError
@@ -44,6 +49,39 @@ class AbstractClient(object):
 
     @classmethod
     def get_collection(cls, database, collection):
+        raise NotImplementedError
+
+    def find(self, filter_=None, projection=None, skip=0):
+        raise NotImplementedError
+
+    def find_one(self, filter_or_id=None, *args, **kw):
+        raise NotImplementedError
+
+    def find_one_and_replace(self, filter_, replacement, projection=None):
+        raise NotImplementedError
+
+    def insert(self, documents):
+        raise NotImplementedError
+
+    def insert_one(self, document):
+        raise NotImplementedError
+
+    def save(self, document):
+        raise NotImplementedError
+
+    def count(self):
+        raise NotImplementedError
+
+    def distinct(self, field):
+        raise NotImplementedError
+
+    def drop(self):
+        raise NotImplementedError
+
+    def remove(self, spec=None, multi=True):
+        raise NotImplementedError
+
+    def update(self, spec, document, multi=False):
         raise NotImplementedError
 
 
@@ -102,25 +140,25 @@ class AbstractCollection(object):
         dsn = dsnparse.parse(self.DSN)
         database, collection = dsn.paths
 
-        self._connection = self.CLIENT.connect(dsn.netlock, *(self.REPLICA_SET or ()))
-        self._database = self.CLIENT.get_database(self._connection, database)
-        self._collection = self.CLIENT.get_collection(self._database, collection)
+        connection = self.CLIENT.connect(dsn.netlock, *(self.REPLICA_SET or ()))
+        database = self.CLIENT.get_database(self._connection, database)
+        collection = self.CLIENT.get_collection(self._database, collection)
+
+        self.client = self.CLIENT(connection, database, collection)
         self.mapping = self.FIELD_MAPPER(self.FIELD_MAPPING or {})
         self.model = model
 
     def find(self, filter_=None, projection=None, skip=0):
-        cursor = self._collection.find(
-            filter=filter_ and self.mapping.pack_document(filter_),
-            projection=projection and self.mapping.pack_document(projection),
-            skip=skip,
-        )
+        filter_ = filter_ and self.mapping.pack_document(filter_)
+        projection = projection and self.mapping.pack_document(projection)
+        cursor = self.client.find(filter_=filter_, projection=projection, skip=skip)
         return self.CURSOR(self, cursor)
 
     def find_one(self, filter_or_id=None, *args, **kw):
         if isinstance(filter_or_id, dict):
             filter_or_id = self.mapping.pack_document(filter_or_id)
 
-        document = self._collection.find_one(filter_or_id, *args, **kw)
+        document = self.client.find_one(filter_or_id, *args, **kw)
         if not document:
             return
 
@@ -128,44 +166,48 @@ class AbstractCollection(object):
         return self.model(**document)
 
     def find_one_and_replace(self, filter_, replacement, projection=None):
-        cursor = self._collection.find_one_and_replace(
-            filter=filter_ and self.mapping.pack_document(filter_),
-            replacement=replacement and self.mapping.pack_document(replacement),
-            projection=projection and self.mapping.pack_document(projection),
+        filter_ = filter_ and self.mapping.pack_document(filter_)
+        replacement = replacement and self.mapping.pack_document(replacement)
+        projection = projection and self.mapping.pack_document(projection)
+
+        cursor = self.client.find_one_and_replace(
+            filter=filter_,
+            replacement=replacement,
+            projection=projection,
         )
         return self.CURSOR(self, cursor)
 
     def insert(self, documents):
         documents = [self.mapping.pack_document(dict(d)) for d in documents]
         documents = [{f: v for f, v in d if v is not None} for d in documents]
-        return self._collection.insert_many(documents).inserted_ids
+        return self.client.insert_many(documents).inserted_ids
 
     def insert_one(self, document):
         document = {f: v for f, v in dict(document) if v is not None}
         document = self.mapping.pack_document(document)
-        return self._collection.insert_one(document).inserted_id
+        return self.client.insert_one(document).inserted_id
 
     def save(self, document):
         raise NotImplementedError
 
     def count(self):
-        return self._collection.count()
+        return self.client.count()
 
     def distinct(self, field):
         field = self.mapping.pack_field(field)
-        return self._collection.distinct(field)
+        return self.client.distinct(field)
 
     def drop(self):
-        return self._collection.drop()
+        return self.client.drop()
 
     def remove(self, spec=None, multi=True):
         if spec is None:
-            return self._collection.remove(multi=multi)
+            return self.client.remove(multi=multi)
 
         spec = self.mapping.pack_document(spec)
-        return self._collection.remove(spec, multi=multi)
+        return self.client.remove(spec, multi=multi)
 
     def update(self, spec, document, multi=False):
         spec = self.mapping.pack_document(spec)
         document = {f: v for f, v in self.pack_document(dict(document)) if v is not None}
-        self._collection.update(spec, document, multi=multi)
+        self.client.update(spec, document, multi=multi)
