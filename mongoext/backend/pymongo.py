@@ -48,7 +48,7 @@ class ICollection(interface.ICollection):
 
 class ICursor(interface.ICursor):
     def sort(self, field):
-        self.cursor.sort(field)
+        self.cursor = self.cursor.sort(field)
 
     def count(self):
         return self.cursor.count()
@@ -57,13 +57,13 @@ class ICursor(interface.ICursor):
         return self.cursor.distinct(field)
 
     def limit(self, limit):
-        return self.cursor.limit(limit)
+        self.cursor = self.cursor.limit(limit)
 
     def rewind(self):
-        self.cursor.rewind()
+        self.cursor = self.cursor.rewind()
 
     def skip(self, skip):
-        return self.cursor.skip(skip)
+        self.cursor =  self.cursor.skip(skip)
 
 
 class AbstractClient(abc.AbstractClient):
