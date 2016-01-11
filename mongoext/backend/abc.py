@@ -74,10 +74,13 @@ class ICollection(object):
 class AbstractClient(object):
     COLLECTION = ICollection
 
-    def __init__(self, connection, database, collection):
-        self.connection = connection
-        self.database = database
-        self.collection = ICollection(collection)
+    def __init__(self, dsn, replica_set):
+        dsn = dsnparse.parse(dsn)
+        database, collection = dsn.paths
+
+        self.connection = self.connect(dsn.netlock, *(replica_set or ()))
+        self.database = self.get_database(self.connection, database)
+        self.collection = self.get_collection(self.database, collection)
 
     @classmethod
     def connect(cls, *seeds):
@@ -136,7 +139,7 @@ class AbstractCursor(object):
 class AbstractCollection(object):
     FIELD_MAPPER = FieldMapper
     CLIENT = AbstractClient
-    CURSOR_WRAPPER = AbstractCursor
+    CURSOR = AbstractCursor
 
     DSN = None
     REPLICA_SET = None
@@ -144,14 +147,7 @@ class AbstractCollection(object):
     FIELD_MAPPING = None
 
     def __init__(self, model):
-        dsn = dsnparse.parse(self.DSN)
-        database, collection = dsn.paths
-
-        connection = self.CLIENT.connect(dsn.netlock, *(self.REPLICA_SET or ()))
-        database = self.CLIENT.get_database(self._connection, database)
-        collection = self.CLIENT.get_collection(self._database, collection)
-
-        self.client = self.CLIENT(connection, database, collection)
+        self.client = self.CLIENT(self.DSN, self.REPLICA_SET)
         self.mapping = self.FIELD_MAPPER(self.FIELD_MAPPING or {})
         self.model = model
 
