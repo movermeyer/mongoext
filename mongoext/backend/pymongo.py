@@ -4,19 +4,7 @@ import pymongo
 from . import abc
 
 
-class AbstractClient(abc.AbstractClient):
-    @classmethod
-    def connect(cls, *seeds):
-        return pymongo.MongoClient(*seeds)
-
-    @classmethod
-    def get_database(cls, connection, database):
-        return connection[database]
-
-    @classmethod
-    def get_collection(cls, database, collection):
-        return database[collection]
-
+class ICollection(abc.ICollection):
     def find(self, filter_=None, projection=None, skip=0):
         return self.collection.find(filter=filter_, projection=projection, skip=skip)
 
@@ -53,6 +41,22 @@ class AbstractClient(abc.AbstractClient):
 
     def update(self, spec, document, multi=False):
         self.collection.update(spec, document, multi=multi)
+
+
+class AbstractClient(abc.AbstractClient):
+    COLLECTION = ICollection
+
+    @classmethod
+    def connect(cls, *seeds):
+        return pymongo.MongoClient(*seeds)
+
+    @classmethod
+    def get_database(cls, connection, database):
+        return connection[database]
+
+    @classmethod
+    def get_collection(cls, database, collection):
+        return database[collection]
 
 
 class AbstractCollection(abc.AbstractCollection):

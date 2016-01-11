@@ -33,23 +33,9 @@ class FieldMapper(object):
         return unpacked_document
 
 
-class AbstractClient(object):
-    def __init__(self, connection, database, collection):
-        self.connection = connection
-        self.database = database
+class ICollection(object):
+    def __init__(self, collection):
         self.collection = collection
-
-    @classmethod
-    def connect(cls, *seeds):
-        raise NotImplementedError
-
-    @classmethod
-    def get_database(cls, connection, database):
-        raise NotImplementedError
-
-    @classmethod
-    def get_collection(cls, database, collection):
-        raise NotImplementedError
 
     def find(self, filter_=None, projection=None, skip=0):
         raise NotImplementedError
@@ -82,6 +68,27 @@ class AbstractClient(object):
         raise NotImplementedError
 
     def update(self, spec, document, multi=False):
+        raise NotImplementedError
+
+
+class AbstractClient(object):
+    COLLECTION = ICollection
+
+    def __init__(self, connection, database, collection):
+        self.connection = connection
+        self.database = database
+        self.collection = ICollection(collection)
+
+    @classmethod
+    def connect(cls, *seeds):
+        raise NotImplementedError
+
+    @classmethod
+    def get_database(cls, connection, database):
+        raise NotImplementedError
+
+    @classmethod
+    def get_collection(cls, database, collection):
         raise NotImplementedError
 
 
@@ -151,14 +158,14 @@ class AbstractCollection(object):
     def find(self, filter_=None, projection=None, skip=0):
         filter_ = filter_ and self.mapping.pack_document(filter_)
         projection = projection and self.mapping.pack_document(projection)
-        cursor = self.client.find(filter_=filter_, projection=projection, skip=skip)
+        cursor = self.client.collection.find(filter_=filter_, projection=projection, skip=skip)
         return self.CURSOR(self, cursor)
 
     def find_one(self, filter_or_id=None, *args, **kw):
         if isinstance(filter_or_id, dict):
             filter_or_id = self.mapping.pack_document(filter_or_id)
 
-        document = self.client.find_one(filter_or_id, *args, **kw)
+        document = self.client.collection.find_one(filter_or_id, *args, **kw)
         if not document:
             return
 
@@ -170,7 +177,7 @@ class AbstractCollection(object):
         replacement = replacement and self.mapping.pack_document(replacement)
         projection = projection and self.mapping.pack_document(projection)
 
-        cursor = self.client.find_one_and_replace(
+        cursor = self.client.collection.find_one_and_replace(
             filter=filter_,
             replacement=replacement,
             projection=projection,
@@ -180,34 +187,34 @@ class AbstractCollection(object):
     def insert(self, documents):
         documents = [self.mapping.pack_document(dict(d)) for d in documents]
         documents = [{f: v for f, v in d if v is not None} for d in documents]
-        return self.client.insert_many(documents).inserted_ids
+        return self.client.collection.insert_many(documents).inserted_ids
 
     def insert_one(self, document):
         document = {f: v for f, v in dict(document) if v is not None}
         document = self.mapping.pack_document(document)
-        return self.client.insert_one(document).inserted_id
+        return self.client.collection.insert_one(document).inserted_id
 
     def save(self, document):
         raise NotImplementedError
 
     def count(self):
-        return self.client.count()
+        return self.client.collection.count()
 
     def distinct(self, field):
         field = self.mapping.pack_field(field)
-        return self.client.distinct(field)
+        return self.client.collection.distinct(field)
 
     def drop(self):
-        return self.client.drop()
+        return self.client.collection.drop()
 
     def remove(self, spec=None, multi=True):
         if spec is None:
-            return self.client.remove(multi=multi)
+            return self.client.collection.remove(multi=multi)
 
         spec = self.mapping.pack_document(spec)
-        return self.client.remove(spec, multi=multi)
+        return self.client.collection.remove(spec, multi=multi)
 
     def update(self, spec, document, multi=False):
         spec = self.mapping.pack_document(spec)
         document = {f: v for f, v in self.pack_document(dict(document)) if v is not None}
-        self.client.update(spec, document, multi=multi)
+        self.client.collection.update(spec, document, multi=multi)
