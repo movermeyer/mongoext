@@ -34,30 +34,6 @@ class FieldMapper(object):
         return unpacked_document
 
 
-class AbstractClient(object):
-    CLIENT_COLLECTION = interface.IClientCollection
-
-    def __init__(self, dsn, replica_set):
-        dsn = dsnparse.parse(dsn)
-        database, collection = dsn.paths
-
-        self.connection = self.connect(dsn.netlock, *(replica_set or ()))
-        self.database = self.get_database(self.connection, database)
-        self.collection = self.get_collection(self.database, collection)
-
-    @classmethod
-    def connect(cls, *seeds):
-        raise NotImplementedError
-
-    @classmethod
-    def get_database(cls, connection, database):
-        raise NotImplementedError
-
-    @classmethod
-    def get_collection(cls, database, collection):
-        raise NotImplementedError
-
-
 class AbstractCursor(object):
     CLIENT_CURSOR = interface.IClientCursor
 
@@ -99,6 +75,30 @@ class AbstractCursor(object):
     def skip(self, skip):
         self._cursor = self._cursor.skip(skip)
         return self
+
+
+class AbstractClient(object):
+    CLIENT_COLLECTION = interface.IClientCollection
+
+    def __init__(self, dsn, replica_set):
+        dsn = dsnparse.parse(dsn)
+        database, collection = dsn.paths
+
+        self.connection = self.connect(dsn.netlock, *(replica_set or ()))
+        self.database = self.get_database(self.connection, database)
+        self.collection = self.get_collection(self.database, collection)
+
+    @classmethod
+    def connect(cls, *seeds):
+        raise NotImplementedError
+
+    @classmethod
+    def get_database(cls, connection, database):
+        raise NotImplementedError
+
+    @classmethod
+    def get_collection(cls, database, collection):
+        raise NotImplementedError
 
 
 class AbstractCollection(object):
