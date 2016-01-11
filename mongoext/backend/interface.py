@@ -1,4 +1,4 @@
-class ICollection(object):
+class IClientCollection(object):
     def __init__(self, collection):
         self.collection = collection
 
@@ -36,7 +36,7 @@ class ICollection(object):
         raise NotImplementedError
 
 
-class ICursor(object):
+class IClientCursor(object):
     def __init__(self, cursor):
         self.cursor = cursor
 

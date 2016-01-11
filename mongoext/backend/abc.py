@@ -35,7 +35,7 @@ class FieldMapper(object):
 
 
 class AbstractClient(object):
-    COLLECTION = interface.ICollection
+    CLIENT_COLLECTION = interface.IClientCollection
 
     def __init__(self, dsn, replica_set):
         dsn = dsnparse.parse(dsn)
@@ -59,7 +59,7 @@ class AbstractClient(object):
 
 
 class AbstractCursor(object):
-    CURSOR = interface.ICursor
+    CLIENT_CURSOR = interface.IClientCursor
 
     def __init__(self, collection, cursor):
         self._collection = collection
