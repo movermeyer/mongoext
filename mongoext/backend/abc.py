@@ -172,7 +172,3 @@ class AbstractCollection(object):
         spec = self.mapping.pack_document(spec)
         document = {f: v for f, v in self.pack_document(dict(document)) if v is not None}
         self._collection.update(spec, document, multi=multi)
-
-
-class AbstractDocument(object):
-    pass
