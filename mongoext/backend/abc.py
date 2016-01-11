@@ -33,16 +33,18 @@ class FieldMapper(object):
         return unpacked_document
 
 
-class AbstractConnection(object):
+class AbstractClient(object):
     @classmethod
     def connect(cls, *seeds):
         raise NotImplementedError
 
-
-class AbstractDatabase(object):
     @classmethod
     def get_database(cls, connection, database):
-        return connection[database]
+        raise NotImplementedError
+
+    @classmethod
+    def get_collection(cls, database, collection):
+        raise NotImplementedError
 
 
 class AbstractCursor(object):
@@ -88,8 +90,7 @@ class AbstractCursor(object):
 
 class AbstractCollection(object):
     FIELD_MAPPER = FieldMapper
-    CONNECTION = AbstractConnection
-    DATABASE = AbstractDatabase
+    CLIENT = AbstractClient
     CURSOR_WRAPPER = AbstractCursor
 
     DSN = None
@@ -101,15 +102,11 @@ class AbstractCollection(object):
         dsn = dsnparse.parse(self.DSN)
         database, collection = dsn.paths
 
-        self._connection = self.CONNECTION.connect(dsn.netlock, *(self.REPLICA_SET or ()))
-        self._database = self.DATABASE.get_database(self._connection, database)
-        self._collection = self.get_collection(self._database, collection)
+        self._connection = self.CLIENT.connect(dsn.netlock, *(self.REPLICA_SET or ()))
+        self._database = self.CLIENT.get_database(self._connection, database)
+        self._collection = self.CLIENT.get_collection(self._database, collection)
         self.mapping = self.FIELD_MAPPER(self.FIELD_MAPPING or {})
         self.model = model
-
-    @classmethod
-    def get_collection(cls, database, collection):
-        return database[collection]
 
     def find(self, filter_=None, projection=None, skip=0):
         cursor = self._collection.find(
