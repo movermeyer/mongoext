@@ -1,10 +1,13 @@
 from __future__ import absolute_import
 import pymongo
 
-from . import abc
+from . import (
+    abc,
+    interface,
+)
 
 
-class ICollection(abc.ICollection):
+class ICollection(interface.ICollection):
     def find(self, filter_=None, projection=None, skip=0):
         return self.collection.find(filter=filter_, projection=projection, skip=skip)
 
@@ -41,6 +44,26 @@ class ICollection(abc.ICollection):
 
     def update(self, spec, document, multi=False):
         self.collection.update(spec, document, multi=multi)
+
+
+class ICursor(interface.ICursor):
+    def sort(self, field):
+        self.cursor.sort(field)
+
+    def count(self):
+        return self.cursor.count()
+
+    def distinct(self, field):
+        return self.cursor.distinct(field)
+
+    def limit(self, limit):
+        return self.cursor.limit(limit)
+
+    def rewind(self):
+        self.cursor.rewind()
+
+    def skip(self, skip):
+        return self.cursor.skip(skip)
 
 
 class AbstractClient(abc.AbstractClient):
