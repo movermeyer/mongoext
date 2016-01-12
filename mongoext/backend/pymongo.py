@@ -7,7 +7,7 @@ from . import (
 )
 
 
-class IClientCollection(interface.IClientCollection):
+class CollectionAdapter(interface.ICollectionAdapter):
     def find(self, filter_=None, projection=None, skip=0):
         return self.collection.find(filter=filter_, projection=projection, skip=skip)
 
@@ -46,7 +46,7 @@ class IClientCollection(interface.IClientCollection):
         self.collection.update(spec, document, multi=multi)
 
 
-class IClientCursor(interface.IClientCursor):
+class CursorAdapter(interface.ICursorAdapter):
     def sort(self, field):
         self.cursor = self.cursor.sort(field)
 
@@ -67,7 +67,7 @@ class IClientCursor(interface.IClientCursor):
 
 
 class AbstractClient(abc.AbstractClient):
-    COLLECTION = IClientCollection
+    COLLECTION = CollectionAdapter
 
     @classmethod
     def connect(cls, *seeds):
