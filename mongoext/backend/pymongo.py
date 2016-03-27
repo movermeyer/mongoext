@@ -43,31 +43,11 @@ class CollectionAdapter(interface.ICollectionAdapter):
         return self.collection.remove(spec, multi=multi)
 
     def update(self, spec, document, multi=False):
-        self.collection.update(spec, document, multi=multi)
-
-
-class CursorAdapter(interface.ICursorAdapter):
-    def sort(self, field):
-        self.cursor = self.cursor.sort(field)
-
-    def count(self):
-        return self.cursor.count()
-
-    def distinct(self, field):
-        return self.cursor.distinct(field)
-
-    def limit(self, limit):
-        self.cursor = self.cursor.limit(limit)
-
-    def rewind(self):
-        self.cursor = self.cursor.rewind()
-
-    def skip(self, skip):
-        self.cursor =  self.cursor.skip(skip)
+        return self.collection.update(spec, document, multi=multi)
 
 
 class AbstractClient(abc.AbstractClient):
-    COLLECTION = CollectionAdapter
+    COLLECTION_ADAPTER = CollectionAdapter
 
     @classmethod
     def connect(cls, *seeds):
@@ -82,13 +62,33 @@ class AbstractClient(abc.AbstractClient):
         return database[collection]
 
 
+class CursorAdapter(interface.ICursorAdapter):
+    def sort(self, field):
+        return self.cursor.sort(field)
+
+    def count(self):
+        return self.cursor.count()
+
+    def distinct(self, field):
+        return self.cursor.distinct(field)
+
+    def limit(self, limit):
+        return self.cursor.limit(limit)
+
+    def rewind(self):
+        return self.cursor.rewind()
+
+    def skip(self, skip):
+        return self.cursor.skip(skip)
+
+    def __iter__(self):
+        for document in self.cursor:
+            yield document
+
+    def next(self):
+        return next(self.cursor)
+
+
 class AbstractCollection(abc.AbstractCollection):
     CLIENT = AbstractClient
-
-    def find(self, filter_=None, projection=None, skip=0):
-        cursor = self._collection.find(
-            filter=filter_ and self.mapping.pack_document(filter_),
-            projection=projection and self.mapping.pack_document(projection),
-            skip=skip,
-        )
-        return self.CURSOR(self, cursor)
+    CURSOR_ADAPTER = CursorAdapter

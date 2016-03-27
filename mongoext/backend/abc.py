@@ -1,62 +1,29 @@
 import mongoext.packages.dsnparse as dsnparse
 
-from . import interface
-
-class FieldMapper(object):
-    def __init__(self, **mapping):
-        self._mapping = dict(mapping, _id='_id')
-        self._reverse_mapping = {v: k for k, v in self._mapping.items()}
-
-    def pack_field(self, field):
-        return self._mapping.get(field, field)
-
-    def pack_document(self, document):
-        packed_document = {}
-        for field, value in document.items():
-            if not field.startswith('$'):
-                field = self.pack_field(field)
-            if isinstance(value, dict):
-                value = self.pack_document(value)
-            packed_document[field] = value
-        return packed_document
-
-    def unpack_field(self, field):
-        return self._reverse_mapping.get(field, field)
-
-    def unpack_document(self, document):
-        unpacked_document = {}
-        for field, value in document.items():
-            if not field.startswith('$'):
-                field = self.unpack_field(field)
-            if isinstance(value, dict):
-                value = self.unpack_document(value)
-            unpacked_document[field] = value
-        return unpacked_document
+from . import (
+    interface,
+    utils,
+)
 
 
 class AbstractCursor(object):
-    CLIENT_CURSOR = interface.IClientCursor
-
-    def __init__(self, collection, cursor):
-        self._collection = collection
+    def __init__(self, cursor, mapping, model):
+        self._mapping = mapping
+        self._model = model
         self._cursor = cursor
 
     def __iter__(self):
         for document in self._cursor:
-            document = self._collection.mapping.unpack_document(document)
-            yield self._collection.model(**document)
+            yield self._model(**self._mapping.unpack_document(document))
 
     def next(self):
-        document = next(self._cursor)
-        document = self._collection.mapping.unpack_document(document)
-        return self._collection.model(**document)
+        return self._model(**self._mapping.unpack_document(next(self._cursor)))
 
     __next__ = next
 
     def sort(self, field):
-        field = self._collection.mapping.pack_field(field)
-        self._cursor = self._cursor.sort(field)
-        return self
+        field = self._mapping.pack_field(field)
+        return type(self)(self._cursor.sort(field), self.mapping, self.model)
 
     def count(self):
         return self._cursor.count()
@@ -78,7 +45,9 @@ class AbstractCursor(object):
 
 
 class AbstractClient(object):
-    CLIENT_COLLECTION = interface.IClientCollection
+    COLLECTION_ADAPTER = interface.ICollectionAdapter
+    CURSOR_ADAPTER = interface.ICursorAdapter
+    CURSOR = AbstractCursor
 
     def __init__(self, dsn, replica_set):
         dsn = dsnparse.parse(dsn)
@@ -87,6 +56,9 @@ class AbstractClient(object):
         self.connection = self.connect(dsn.netlock, *(replica_set or ()))
         self.database = self.get_database(self.connection, database)
         self.collection = self.get_collection(self.database, collection)
+
+    def get_cursor(self, cursor, mapping, model):
+        return self.CURSOR(self.CURSOR_ADAPTER(cursor), mapping, model)
 
     @classmethod
     def connect(cls, *seeds):
@@ -102,9 +74,8 @@ class AbstractClient(object):
 
 
 class AbstractCollection(object):
-    FIELD_MAPPER = FieldMapper
+    FIELD_MAPPER = utils.FieldMapper
     CLIENT = AbstractClient
-    CURSOR = AbstractCursor
 
     DSN = None
     REPLICA_SET = None
@@ -112,9 +83,9 @@ class AbstractCollection(object):
     FIELD_MAPPING = None
 
     def __init__(self, model):
-        self.client = self.CLIENT(self.DSN, self.REPLICA_SET)
         self.mapping = self.FIELD_MAPPER(self.FIELD_MAPPING or {})
         self.model = model
+        self.client = self.CLIENT(self.DSN, self.REPLICA_SET)
 
     def find(self, filter_=None, projection=None, skip=0):
         filter_ = filter_ and self.mapping.pack_document(filter_)

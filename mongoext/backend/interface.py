@@ -57,3 +57,11 @@ class ICursorAdapter(object):
 
     def skip(self, skip):
         raise NotImplementedError
+
+    def __iter__(self):
+        raise NotImplementedError
+
+    def next(self):
+        raise NotImplementedError
+
+    __next__ = next
